@@ -57,17 +57,15 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      contactNumber: data.get("contactNumber"),
-      password: data.get("password"),
-    });
+
     const loginData = {
-      contact: data.get("contactNumber"),
+      email: data.get("email"),
       password: data.get("password"),
     };
     console.log(loginData);
     // navigate("/dashboard");
     const result = await login(dispatch, loginData);
+    console.log(result);
     if (result) {
       navigate("/dashboard");
     } else {
@@ -89,7 +87,7 @@ export default function Login() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: "url(https://res.cloudinary.com/midefulness/image/upload/v1669736690/Home/4247827_vrfddn.jpg)",
+            backgroundImage: "url(https://res.cloudinary.com/midefulness/image/upload/v1681233607/medicare/415_iuy7yk.jpg)",
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -125,11 +123,11 @@ export default function Login() {
                 margin="normal"
                 required
                 fullWidth
-                type="text"
-                id="contactNumber"
-                label="Contact Number"
-                name="contactNumber"
-                autoComplete="contactNumber"
+                type="email"
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
                 autoFocus
               />
               <TextField

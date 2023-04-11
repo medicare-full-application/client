@@ -61,12 +61,32 @@ export const adminRegister = async (User, token) => {
   }
 };
 
+export const userRegister = async (userType, User, token) => {
+  // dispatch(addUserStart());
+  try {
+    const res = await publicRequest.post(`/auth/register/${userType}`, User, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(res);
+    return 1;
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "User registration Failed!",
+    });
+    return 0;
+  }
+};
+
 export const login = async (dispatch, data) => {
   // const userData = JSON.stringify(data);
   console.log(data);
   dispatch(loginStart());
   try {
-    const res = await publicRequest.post("/local_user/login", data);
+    const res = await publicRequest.post("/auth/login", data);
     console.log(res);
     dispatch(loginSuccess(res.data));
     return 1;
@@ -76,14 +96,15 @@ export const login = async (dispatch, data) => {
   }
 };
 
-export const getUsers = async (dispatch, token) => {
+export const getUsers = async (userType, dispatch, token) => {
   dispatch(getUserStart());
   try {
-    const res = await publicRequest.get("/user", {
+    const res = await publicRequest.get(`/user/${userType}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log(res.data);
     dispatch(getUserSuccess(res.data.data));
     return 1;
   } catch (err) {
