@@ -54,7 +54,7 @@ export default function MainHeader(props) {
   //   };
   //   checkUserExist();
   // }, []);
-  if(userToken === null){
+  if (userToken === null) {
     // navigate("/");
     window.location.href = "/";
   }
@@ -84,8 +84,8 @@ export default function MainHeader(props) {
               <MainTab value={tabValue} />
             </Box> */}
             <IconButton onClick={() => navigate("/profile")}>
-            {/* <IconButton> */}
-              <Avatar alt="Profile Picture" src={user.user_img} />
+              {/* <IconButton> */}
+              <Avatar alt="Profile Picture" src={user.imageUrl} />
             </IconButton>
             {/* <NotificationMenu /> */}
             <MainHeaderMenu />

@@ -3,11 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 const userSlice = createSlice({
   name: "user",
   initialState: {
+    userType: null,
+    loginId: null,
     currentUser: [],
     otherUsers: null,
     adminUsers: null,
     isFetching: false,
-    authorities:[],
+    authorities: [],
     token: null,
     error: false,
   },
@@ -17,8 +19,10 @@ const userSlice = createSlice({
     },
     loginSuccess: (state, action) => {
       state.isFetching = false;
-      state.currentUser = action.payload.data;
-      state.token = action.payload.token;
+      state.currentUser = action.payload.userData;
+      state.token = action.payload.accessToken;
+      state.userType = action.payload.login.userType;
+      state.loginId = action.payload.login._id;
       //please set permissions
       // state.authorities = action.payload.authorities;
     },
@@ -85,9 +89,11 @@ const userSlice = createSlice({
     },
     updateUserSuccess: (state, action) => {
       state.isFetching = false;
-      state.otherUsers[
-        state.otherUsers.findIndex((item) => item.user_id === action.payload.user_id)
-      ] = action.payload.User;
+      state.currentUser[
+        state.currentUser.findIndex(
+          (item) => item._id === action.payload._id
+        )
+      ] = action.payload;
     },
     updateUserFailure: (state) => {
       state.isFetching = false;
@@ -129,6 +135,6 @@ export const {
   addUserFailure,
   removeAdminUsers,
   removeOtherUsers,
-  currentUserSet
+  currentUserSet,
 } = userSlice.actions;
 export default userSlice.reducer;

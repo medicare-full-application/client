@@ -1,7 +1,7 @@
-import React from 'react'
-import MainHeader from '../../components/MainHeader'
+import React from "react";
+import MainHeader from "../../components/MainHeader";
 import { Grid } from "@mui/material";
-import { UserAdminUpdateImpl } from './UserAdminUpdateImpl';
+// import { UserAdminUpdateImpl } from './UserAdminUpdateImpl';
 
 export const UserAdminUpdate = () => {
   return (
@@ -9,9 +9,10 @@ export const UserAdminUpdate = () => {
       <MainHeader value={0} />
       <Grid container spacing={2} sx={{ pt: "100px", px: 5 }}>
         <Grid item xs={12}>
-          <UserAdminUpdateImpl />
+          <div>Yohan</div>
+          {/* <UserAdminUpdateImpl /> */}
         </Grid>
       </Grid>
     </React.Fragment>
-  )
-}
+  );
+};

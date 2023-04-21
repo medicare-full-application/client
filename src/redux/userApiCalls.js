@@ -26,7 +26,7 @@ export const normalUserRegister = async (User, token) => {
   try {
     const res = await publicRequest.post(`/user/createUser`, User, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        token: `Bearer ${token}`,
       },
     });
     console.log(res);
@@ -46,7 +46,7 @@ export const adminRegister = async (User, token) => {
   try {
     const res = await publicRequest.post(`/local_user/createUser`, User, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        token: `Bearer ${token}`,
       },
     });
     console.log(res);
@@ -66,7 +66,7 @@ export const userRegister = async (userType, User, token) => {
   try {
     const res = await publicRequest.post(`/auth/register/${userType}`, User, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        token: `Bearer ${token}`,
       },
     });
     console.log(res);
@@ -101,11 +101,11 @@ export const getUsers = async (userType, dispatch, token) => {
   try {
     const res = await publicRequest.get(`/user/${userType}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        token: `Bearer ${token}`,
       },
     });
     console.log(res.data);
-    dispatch(getUserSuccess(res.data.data));
+    dispatch(getUserSuccess(res.data));
     return 1;
   } catch (err) {
     dispatch(getUserFailure());
@@ -113,75 +113,14 @@ export const getUsers = async (userType, dispatch, token) => {
   }
 };
 
-export const getUsersDummy = async (dispatch, token) => {
-  dispatch(getUserStart());
-  try {
-    const res = await publicRequest.get("/user", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return res.data.data;
-  } catch (err) {
-    dispatch(getUserFailure());
-    return 0;
-  }
-};
 
-export const getAdminUsers = async (dispatch, token) => {
-  dispatch(getUserStart());
-  try {
-    const res = await publicRequest.get("/local_user", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    dispatch(getAdminUserSuccess(res.data.data));
-    return 1;
-  } catch (err) {
-    dispatch(getUserFailure());
-    return 0;
-  }
-};
-
-export const getAdminUsersDummy = async (dispatch, token) => {
-  dispatch(getUserStart());
-  try {
-    const res = await publicRequest.get("/local_user", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return res.data.data;
-  } catch (err) {
-    dispatch(getUserFailure());
-    return 0;
-  }
-};
-
-export const getAdminUser = async (dispatch, token, id) => {
-  dispatch(getUserStart());
-  try {
-    const res = await publicRequest.get(`/local_user/getUser?userId=${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    dispatch(currentUserSet(res.data.data));
-    return 1;
-  } catch (err) {
-    dispatch(getUserFailure());
-    return 0;
-  }
-};
-
-export const deleteUser = async (id, dispatch, token) => {
+export const deleteUser = async (id, userType, dispatch, token) => {
   dispatch(deleteUserStart());
   try {
-    const res = await userRequest.delete(`/user/${id}`, {
+    const res = await userRequest.delete(`/user/${id}/${userType}`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        token: `Bearer ${token}`,
       },
     });
     dispatch(deleteUserSuccess(id));
@@ -192,18 +131,18 @@ export const deleteUser = async (id, dispatch, token) => {
   }
 };
 
-export const updateNormalUser = async (user_id, User, dispatch, token) => {
+export const updateUser = async (id, userType, User, dispatch, token) => {
   dispatch(updateUserStart());
   try {
     // update
-    const res = await publicRequest.put(`/user/updateUser`, User, {
+    const res = await publicRequest.put(`/user/${id}/${userType}`, User, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        token: `Bearer ${token}`,
       },
     });
     console.log(res);
-    // dispatch(updateUserSuccess({ user_id, User }));
+    dispatch(updateUserSuccess(res.data));
     return 1;
   } catch (err) {
     dispatch(updateUserFailure());
@@ -211,18 +150,35 @@ export const updateNormalUser = async (user_id, User, dispatch, token) => {
   }
 };
 
-export const updateAdminNormalUser = async (user_id, User, dispatch, token) => {
+export const updateUserEmail = async (id, loginId, userType, User, dispatch, token) => {
   dispatch(updateUserStart());
   try {
     // update
-    const res = await publicRequest.put(`/local_user/updateUser`, User, {
+    const res = await publicRequest.put(`/user/email/${id}/${loginId}/${userType}`, User, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        token: `Bearer ${token}`,
       },
     });
     console.log(res);
-    // dispatch(updateUserSuccess({ user_id, User }));
+    dispatch(updateUserSuccess(res.data));
+    return 1;
+  } catch (err) {
+    dispatch(updateUserFailure());
+    return 0;
+  }
+};
+
+export const updateUserPassword = async (loginId, User, dispatch, token) => {
+  dispatch(updateUserStart());
+  try {
+    const res = await publicRequest.put(`/user/password/${loginId}`, User, {
+      headers: {
+        "Content-Type": "application/json",
+        token: `Bearer ${token}`,
+      },
+    });
+    console.log(res);
     return 1;
   } catch (err) {
     dispatch(updateUserFailure());

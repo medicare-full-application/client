@@ -11,13 +11,7 @@ import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import {
-    getAdminUser,
-  getAdminUsers,
-  getUsers,
-  updateAdminNormalUser,
-  updateNormalUser,
-} from "../../redux/userApiCalls";
+import { updateUser } from "../../redux/userApiCalls";
 
 export const ProfileUpdateImpl = () => {
   const location = useLocation();
@@ -40,21 +34,22 @@ export const ProfileUpdateImpl = () => {
   const dispatch = useDispatch();
 
   const token = useSelector((state) => state.user.token);
+  const userType = useSelector((state) => state.user.userType);
 
   const currentUser = useSelector((state) => state.user.currentUser);
   console.log(currentUser);
 
-  React.useEffect(() => {
-    const getDataFromDBAdmin = async () => {
-      const result = await getAdminUser(dispatch, token, currentUser.user_id);
-      if (result) {
-        console.log("Get user data success");
-      } else {
-        console.log("Get user data unsuccess");
-      }
-    };
-    getDataFromDBAdmin();
-  }, [triggerAdmin]);
+  // React.useEffect(() => {
+  //   const getDataFromDBAdmin = async () => {
+  //     const result = await getAdminUser(dispatch, token, currentUser.user_id);
+  //     if (result) {
+  //       console.log("Get user data success");
+  //     } else {
+  //       console.log("Get user data unsuccess");
+  //     }
+  //   };
+  //   getDataFromDBAdmin();
+  // }, [triggerAdmin]);
   // const otherUsers = useSelector((state) => state.user.otherUsers.data);
 
   const MONTHS = useMemo(
@@ -91,39 +86,31 @@ export const ProfileUpdateImpl = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const formNewData = {
-      user_id: currentUser.user_id,
-      first_name: formData.get("first_name")
+      firstName: formData.get("first_name")
         ? formData.get("first_name")
         : currentUser.first_name,
-      last_name: formData.get("last_name")
+      lastName: formData.get("last_name")
         ? formData.get("last_name")
         : currentUser.last_name,
-      contact: formData.get("contact")
+      contactNo: formData.get("contact")
         ? formData.get("contact")
         : currentUser.contact,
       email: formData.get("email") ? formData.get("email") : currentUser.email,
-      address: currentUser.address,
-      birthday: currentUser.birthday,
-      district: currentUser.district,
-      status: currentUser.status,
-      town: currentUser.town,
-      user_img: currentUser.user_img,
-      zipcode: currentUser.zipcode,
-      role_id: currentUser.role_id,
       // img: product.img,
     };
 
     console.log(formNewData);
 
-    const result = await updateAdminNormalUser(
-      currentUser.user_id,
+    const result = await updateUser(
+      currentUser._id,
+      userType,
       formNewData,
       dispatch,
       token
     );
     // console.log(result);
     if (result) {
-      setTriggerAdmin(triggerAdmin + "yk");
+      // setTriggerAdmin(triggerAdmin + "yk");
       console.log("Success");
       Swal.fire({
         icon: "success",
@@ -164,21 +151,21 @@ export const ProfileUpdateImpl = () => {
         </div>
         <div className="productTopRight">
           <div className="productInfoTop">
-            <img src={currentUser.user_img} alt="" className="productInfoImg" />
+            <img src={currentUser.imageUrl} alt="" className="productInfoImg" />
             <span className="productName">User Details</span>
           </div>
           <div className="productInfoBottom">
             <div className="productInfoItem">
               <span className="productInfoKey">User ID:</span>
-              <span className="productInfoValue">{currentUser.user_id}</span>
+              <span className="productInfoValue">{currentUser._id}</span>
             </div>
             <div className="productInfoItem">
               <span className="productInfoKey">First Name:</span>
-              <span className="productInfoValue">{currentUser.first_name}</span>
+              <span className="productInfoValue">{currentUser.firstName}</span>
             </div>
             <div className="productInfoItem">
               <span className="productInfoKey">Last Name:</span>
-              <span className="productInfoValue">{currentUser.last_name}</span>
+              <span className="productInfoValue">{currentUser.lastName}</span>
             </div>
             <div className="productInfoItem">
               <span className="productInfoKey">Email:</span>
@@ -215,7 +202,7 @@ export const ProfileUpdateImpl = () => {
                   <Grid item md={4}>
                     <TextField
                       error={firstNameError}
-                      defaultValue={currentUser.first_name}
+                      defaultValue={currentUser.firstName}
                       variant="standard"
                       margin="normal"
                       // required
@@ -235,7 +222,7 @@ export const ProfileUpdateImpl = () => {
                   <Grid item md={4}>
                     <TextField
                       error={lastNameError}
-                      defaultValue={currentUser.last_name}
+                      defaultValue={currentUser.lastName}
                       variant="standard"
                       margin="normal"
                       // required
@@ -256,7 +243,7 @@ export const ProfileUpdateImpl = () => {
                   <Grid item md={4}>
                     <TextField
                       error={contactError}
-                      defaultValue={currentUser.contact}
+                      defaultValue={currentUser.contactNo}
                       variant="standard"
                       margin="normal"
                       // required

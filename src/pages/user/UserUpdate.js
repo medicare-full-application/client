@@ -1,7 +1,7 @@
 import React from 'react'
 import MainHeader from '../../components/MainHeader'
 import { Grid } from "@mui/material";
-import { UserUpdateImpl } from './UserUpdateImpl';
+// import { UserUpdateImpl } from './UserUpdateImpl';
 
 export const UserUpdate = () => {
   return (
@@ -9,7 +9,8 @@ export const UserUpdate = () => {
       <MainHeader value={0} />
       <Grid container spacing={2} sx={{ pt: "100px", px: 5 }}>
         <Grid item xs={12}>
-          <UserUpdateImpl />
+          {/* <UserUpdateImpl /> */}
+          <div>Yohan</div>
         </Grid>
       </Grid>
     </React.Fragment>

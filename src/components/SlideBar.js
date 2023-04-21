@@ -45,41 +45,9 @@ const theme = createTheme({
 });
 function SlideBar(props) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [tabValue, setTabValue] = useState(props.value);
+  // const [tabValue, setTabValue] = useState(props.value);
   const [open, setOpen] = useState(true);
-  const [items, setItems] = useState([]);
-
-  const dispatch = useDispatch();
-  const userId = useSelector((state) => state.user.currentUser.user_id);
-  const token = useSelector((state) => state.user.token);
-  const permissionsData = useSelector(
-    (state) => state.permissionData.permissionsData
-  );
-
-  let data = {};
-
-  const [checked, setChecked] = useState({
-    adminUser: [false, false, false, false],
-    event: [false, false, false, false],
-    advertisement: [false, false, false, false],
-    post: [false, false, false, false],
-  });
-
-  useEffect(() => {
-    const getPermissionDataFromOutside = async () => {
-      // let data = {};
-      const result = await getOnePermission(dispatch, token, userId);
-      if (result) {
-        
-        data = result;
-        setChecked(data);
-        console.log(checked);
-        console.log(data);
-        setValuesForSidebar();
-      }
-    };
-    getPermissionDataFromOutside();
-  }, []);
+  // const [items, setItems] = useState([]);
 
   const handleClick = () => {
     setOpen(!open);
@@ -91,46 +59,16 @@ function SlideBar(props) {
   };
 
   // const listItems = SlideBarListItems(props.tabValue);
-  const listItems = SlideBarListItems(props.tabValue);
-
-  const setValuesForSidebar = () => {
-    let dataArray = [];
-    listItems.map((items) => {
-      if (items.name == "dashboard") {
-        dataArray.push(items);
-      }
-      if (data.view_users) {
-        if (items.name == "view_users") {
-          dataArray.push(items);
-        }
-      }
-      if (data.view_events) {
-        if (items.name == "view_events") {
-          dataArray.push(items);
-        }
-      }
-      if (data.view_posts) {
-        if (items.name == "view_posts") {
-          dataArray.push(items);
-        }
-      }
-      if (data.view_advertisement) {
-        if (items.name == "view_advertisement") {
-          dataArray.push(items);
-        }
-      }
-    });
-    setItems(dataArray);
-  };
+  const listItems = SlideBarListItems();
 
   const drawer = (
     <Box sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        Virtual Temple
+        Medicare
       </Typography>
       <Divider />
       <List>
-        {items.map((listItem) => (
+        {listItems.map((listItem) => (
           <div key={listItem.id}>
             {!listItem.hasExpand ? (
               <ListItemButton

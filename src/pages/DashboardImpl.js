@@ -23,9 +23,9 @@ export const DashboardImpl = () => {
   const [featuredData, setFeaturedData] = useState([]);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
-  const otherUsers = useSelector((state) => state.user.otherUsers);
-  const adminUsers = useSelector((state) => state.user.adminUsers);
-  const events = useSelector((state) => state.event.events);
+  // const otherUsers = useSelector((state) => state.user.otherUsers);
+  // const adminUsers = useSelector((state) => state.user.adminUsers);
+  // const events = useSelector((state) => state.event.events);
 
   const MONTHS = useMemo(
     () => [
@@ -45,55 +45,56 @@ export const DashboardImpl = () => {
     []
   );
 
-  useEffect(() => {
-    const getCountInventoryData = async () => {
-      const result1 = await getUsersDummy(dispatch, token);
-      if (result1) {
-        setOther(result1.length);
-        console.log("Success");
-        setLoading1(false);
-      } else {
-        console.log("Unsuccess");
-      }
-    };
-    getCountInventoryData();
-  }, []);
+  // useEffect(() => {
+  //   const getCountInventoryData = async () => {
+  //     const result1 = await getUsersDummy(dispatch, token);
+  //     if (result1) {
+  //       setOther(result1.length);
+  //       console.log("Success");
+  //       setLoading1(false);
+  //     } else {
+  //       console.log("Unsuccess");
+  //     }
+  //   };
+  //   getCountInventoryData();
+  // }, []);
 
-  useEffect(() => {
-    const getCountInventoryData = async () => {
-      const result2 = await getAdminUsersDummy(dispatch, token);
-      if (result2) {
-        console.log(result2.length);
-        console.log(admin);
-        setAdmin(result2.length);
-        console.log("Success");
-        setLoading2(false);
-      } else {
-        console.log("Unsuccess");
-      }
-    };
-    getCountInventoryData();
-  }, []);
+  // useEffect(() => {
+  //   const getCountInventoryData = async () => {
+  //     const result2 = await getAdminUsersDummy(dispatch, token);
+  //     if (result2) {
+  //       console.log(result2.length);
+  //       console.log(admin);
+  //       setAdmin(result2.length);
+  //       console.log("Success");
+  //       setLoading2(false);
+  //     } else {
+  //       console.log("Unsuccess");
+  //     }
+  //   };
+  //   getCountInventoryData();
+  // }, []);
 
-  useEffect(() => {
-    const getCountInventoryData = async () => {
-      const result = await getEventDummy(dispatch, token);
-      if (result) {
-        setEvent(result.length);
-        setLoading3(false);
-        console.log("Success");
-      } else {
-        console.log("Unsuccess");
-      }
-    };
-    getCountInventoryData();
-  }, []);
+  // useEffect(() => {
+  //   const getCountInventoryData = async () => {
+  //     const result = await getEventDummy(dispatch, token);
+  //     if (result) {
+  //       setEvent(result.length);
+  //       setLoading3(false);
+  //       console.log("Success");
+  //     } else {
+  //       console.log("Unsuccess");
+  //     }
+  //   };
+  //   getCountInventoryData();
+  // }, []);
 
   let featureData = [
     {
       index: 1,
       title: "No of Users",
-      number: other,
+      // number: other,
+      number: 15,
       // percentage: -1.4,
       isDowngrade: false,
       // text: "Compared to last month",
@@ -101,7 +102,8 @@ export const DashboardImpl = () => {
     {
       index: 2,
       title: "No of Events",
-      number: event,
+      // number: event,
+      number: 86,
       // percentage: +1.4,
       isDowngrade: true,
       // text: "Compared to last month",
@@ -109,7 +111,8 @@ export const DashboardImpl = () => {
     {
       index: 3,
       title: "No of Admin Users",
-      number: admin,
+      // number: admin,
+      number: 89,
       // percentage: -1.4,
       isDowngrade: false,
       // text: "Compared to last month",
@@ -132,20 +135,23 @@ export const DashboardImpl = () => {
 
   return (
     <div>
-      {loading1 && loading2 && loading3 ? (
+      {/* {loading1 && loading2 && loading3 ? (
         <Box sx={{ width: "100%" }}>
           <LinearProgress />
         </Box>
       ) : (
         <FeaturedInfo data={featureData} />
-      )}
-      {/* <Charts
+      )} */}
+
+      <FeaturedInfo data={featureData} />
+
+      <Charts
         data={userStats}
         title="Users Analytics"
         grid
         dataKey1="User"
         dataKey2="Admin"
-      /> */}
+      />
     </div>
   );
 };

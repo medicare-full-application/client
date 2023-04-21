@@ -22,6 +22,7 @@ export const UserListImpl = () => {
   const [loading, setLoading] = useState(true);
   const [trigger, setTrigger] = useState("s");
   const token = useSelector((state) => state.user.token);
+  // const userType = useSelector((state) => state.user.userType);
   const otherUsers = useSelector((state) => state.user.otherUsers);
   const permissionsData = useSelector(
     (state) => state.permissionData.permissionsData
@@ -35,7 +36,7 @@ export const UserListImpl = () => {
   React.useEffect(() => {
     const getDataFromDB = async () => {
       dispatch(removeOtherUsers());
-      const result = await getUsers(dispatch, token);
+      const result = await getUsers("Patient", dispatch, token);
       if (result) {
         console.log("Get user data success");
         setTrigger(trigger + "s");
@@ -54,17 +55,17 @@ export const UserListImpl = () => {
         (item) => {
           // if (item.status) {
           rowData.push({
-            id: item.user_id,
-            col1: item.first_name,
-            col2: item.last_name,
-            col3: item.district,
-            col4: item.user_img,
-            col5: item.town,
+            id: item._id,
+            col1: item.firstName,
+            col2: item.lastName,
+            col3: item.NIC,
+            col4: item.imageUrl,
+            col5: item.haveChildren,
             col6: item.address,
-            col7: item.contact,
+            col7: item.contactNo,
             col8: item.email,
-            col9: item.status,
-            col10: item.birthday,
+            col9: item.userStatus,
+            col10: item.dateOfBirth,
           });
         }
         // }
@@ -121,7 +122,7 @@ export const UserListImpl = () => {
   };
 
   const columns = [
-    { field: "id", headerName: "User Id", width: 300 },
+    // { field: "id", headerName: "User Id", width: 300 },
     {
       field: "col1",
       headerName: "Full Name",
@@ -135,11 +136,44 @@ export const UserListImpl = () => {
         );
       },
     },
+    { field: "col3", headerName: "NIC", width: 120 },
     { field: "col8", headerName: "Email", width: 180 },
     { field: "col6", headerName: "Address", width: 180 },
-    { field: "col7", headerName: "Contact", width: 180 },
-    { field: "col5", headerName: "Town", width: 180 },
-    { field: "col3", headerName: "District", width: 180 },
+    { field: "col7", headerName: "Contact", width: 120 },
+    {
+      field: "col5",
+      headerName: "Have Children",
+      width: 120,
+      renderCell: (params) => {
+        return (
+          <>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              {params.row.col5}
+              {params.row.col5 ? (
+                <IconButton
+                  aria-label="edit"
+                  size="large"
+                  color="success"
+                  // onClick={() => changeItem(params.row.id)}
+                >
+                  <CheckIcon />
+                </IconButton>
+              ) : (
+                <IconButton
+                  aria-label="delete"
+                  size="large"
+                  color="error"
+                  // onClick={() => changeItem(params.row.id)}
+                >
+                  <ClearIcon />
+                </IconButton>
+              )}
+            </Stack>
+          </>
+        );
+      },
+    },
+
     {
       field: "col10",
       headerName: "Birthday",
@@ -154,7 +188,7 @@ export const UserListImpl = () => {
                 aria-label="edit"
                 size="large"
                 color="success"
-                onClick={() => wishBirthday(params.row)}
+                // onClick={() => wishBirthday(params.row)}
               >
                 <CelebrationIcon />
               </IconButton>
@@ -163,77 +197,73 @@ export const UserListImpl = () => {
         );
       },
     },
-    {
-      field: "col9",
-      headerName: "User Status",
-      width: 150,
-      renderCell: (params) => {
-        return (
-          <>
-            {/* params.row.isCancel */}
-            <Stack direction="row" alignItems="center" spacing={1}>
-              {params.row.col9 ? (
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="success"
-                  onClick={() => changeItem(params.row.id)}
-                >
-                  <CheckIcon />
-                </IconButton>
-              ) : (
-                <IconButton
-                  aria-label="delete"
-                  size="large"
-                  color="error"
-                  onClick={() => changeItem(params.row.id)}
-                >
-                  <ClearIcon />
-                </IconButton>
-              )}
-            </Stack>
-          </>
-        );
-      },
-    },
-    {
-      field: "action",
-      headerName: "Action",
-      width: 200,
-      renderCell: (params) => {
-        return (
-          <>
-            {/* params.row.isCancel */}
-            <Stack direction="row" alignItems="center" spacing={1}>
-              {permissionsData.update_users ? (
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="success"
-                  onClick={() => updateItem(params.row.id)}
-                >
-                  <EditIcon />
-                </IconButton>
-              ) : (
-                <></>
-              )}
+    // {
+    //   field: "col9",
+    //   headerName: "User Status",
+    //   width: 150,
+    //   renderCell: (params) => {
+    //     return (
+    //       <>
+    //         {/* params.row.isCancel */}
+    //         <Stack direction="row" alignItems="center" spacing={1}>
+    //           {params.row.col9 ? (
+    //             <IconButton
+    //               aria-label="edit"
+    //               size="large"
+    //               color="success"
+    //               onClick={() => changeItem(params.row.id)}
+    //             >
+    //               <CheckIcon />
+    //             </IconButton>
+    //           ) : (
+    //             <IconButton
+    //               aria-label="delete"
+    //               size="large"
+    //               color="error"
+    //               onClick={() => changeItem(params.row.id)}
+    //             >
+    //               <ClearIcon />
+    //             </IconButton>
+    //           )}
+    //         </Stack>
+    //       </>
+    //     );
+    //   },
+    // },
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   width: 200,
+    //   renderCell: (params) => {
+    //     return (
+    //       <>
+    //         {/* params.row.isCancel */}
+    //         <Stack direction="row" alignItems="center" spacing={1}>
+    //           <IconButton
+    //             aria-label="edit"
+    //             size="large"
+    //             color="success"
+    //             onClick={() => updateItem(params.row.id)}
+    //           >
+    //             <EditIcon />
+    //           </IconButton>
 
-              {/* <IconButton
-                aria-label="edit"
-                size="large"
-                color="success"
-                onClick={() => updatePermission(params.row.id)}
-              >
-                <AdminPanelSettingsIcon />
-              </IconButton> */}
-              {/* <IconButton aria-label="delete" size="large" color="error" onClick={() => deleteItem(params.row.id)}>
-                <DeleteIcon />
-              </IconButton> */}
-            </Stack>
-          </>
-        );
-      },
-    },
+    //           {/* <IconButton
+    //             aria-label="edit"
+    //             size="large"
+    //             color="success"
+    //             onClick={() => updatePermission(params.row.id)}
+    //           >
+    //             <AdminPanelSettingsIcon />
+    //           </IconButton> */}
+    //           {/* <IconButton aria-label="delete" size="large" color="error" onClick={() => deleteItem(params.row.id)}>
+    //             <DeleteIcon />
+    //           </IconButton> */}
+    //         </Stack>
+    //       </>
+    //     );
+    //   },
+    // },
   ];
   return (
     <Box
@@ -256,22 +286,18 @@ export const UserListImpl = () => {
             alignItems="center"
           >
             <div>
-              <h2>Normal Users</h2>
+              <h2>Patients</h2>
             </div>
-            <div>
-              {permissionsData.create_users ? (
-                <Button
-                  variant="contained"
-                  href="/createUser"
-                  // color="secondary"
-                  endIcon={<AddIcon />}
-                >
-                  Create
-                </Button>
-              ) : (
-                <></>
-              )}
-            </div>
+            {/* <div>
+              <Button
+                variant="contained"
+                href="/createUser"
+                // color="secondary"
+                endIcon={<AddIcon />}
+              >
+                Create
+              </Button>
+            </div> */}
 
             {/* <Button variant="contained">Contained1</Button> */}
           </Grid>
