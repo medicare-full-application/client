@@ -16,7 +16,7 @@ import {
   addUserStart,
   addUserSuccess,
   addUserFailure,
-  currentUserSet
+  currentUserSet,
 } from "./userRedux";
 import { publicRequest, userRequest } from "../requestMethods";
 import Swal from "sweetalert2";
@@ -61,14 +61,10 @@ export const adminRegister = async (User, token) => {
   }
 };
 
-export const userRegister = async (userType, User, token) => {
+export const userRegister = async (userType, User) => {
   // dispatch(addUserStart());
   try {
-    const res = await publicRequest.post(`/auth/register/${userType}`, User, {
-      headers: {
-        token: `Bearer ${token}`,
-      },
-    });
+    const res = await publicRequest.post(`/auth/register/${userType}`, User);
     console.log(res);
     return 1;
   } catch (err) {
@@ -113,7 +109,6 @@ export const getUsers = async (userType, dispatch, token) => {
   }
 };
 
-
 export const deleteUser = async (id, userType, dispatch, token) => {
   dispatch(deleteUserStart());
   try {
@@ -150,16 +145,27 @@ export const updateUser = async (id, userType, User, dispatch, token) => {
   }
 };
 
-export const updateUserEmail = async (id, loginId, userType, User, dispatch, token) => {
+export const updateUserEmail = async (
+  id,
+  loginId,
+  userType,
+  User,
+  dispatch,
+  token
+) => {
   dispatch(updateUserStart());
   try {
     // update
-    const res = await publicRequest.put(`/user/email/${id}/${loginId}/${userType}`, User, {
-      headers: {
-        "Content-Type": "application/json",
-        token: `Bearer ${token}`,
-      },
-    });
+    const res = await publicRequest.put(
+      `/user/email/${id}/${loginId}/${userType}`,
+      User,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          token: `Bearer ${token}`,
+        },
+      }
+    );
     console.log(res);
     dispatch(updateUserSuccess(res.data));
     return 1;

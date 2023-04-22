@@ -19,6 +19,7 @@ import { AdvertisementCreate } from "./pages/advertisement/AdvertisementCreate";
 import { UserManagement } from "./pages/userManagement/UserManagement";
 import { ProfileUpdate } from "./pages/user/ProfileUpdate";
 import { MedicalRecordList } from "./pages/medicalRecord/MedicalRecordList";
+import SignUp from "./pages/SignUp";
 
 function App() {
   const theme = createTheme({
@@ -57,6 +58,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/signUp" element={<SignUp />} />
           <Route path="/dashboard" element={<Dashboard />} />
           {/* user */}
           <Route path="/user" element={<UserList />} />
