@@ -12,12 +12,12 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import { getUsers, updateNormalUser } from "../../redux/userApiCalls";
-import { getEvent, updateEvent } from "../../redux/eventApiCalls";
+import { getMedicalRecord, updateMedicalRecord } from "../../redux/medicalRecordApiCalls";
 
-export const EventUpdateImpl = () => {
+export const MedicalRecordUpdateImpl = () => {
   const location = useLocation();
   // const productId = location.pathname.split("/")[3];
-  const eventId = window.location.pathname.split("/")[2];
+  const medicalRecordId = window.location.pathname.split("/")[2];
   // console.log(productId);
   const [pStats, setPStats] = useState([]);
   const [show, setShow] = useState(false);
@@ -44,13 +44,13 @@ export const EventUpdateImpl = () => {
   const userId = useSelector((state) => state.user.currentUser.user_id);
 
   const currentUser = useSelector((state) =>
-    state.event.events.find((user) => user.event_id == eventId)
+    state.medicalRecord.medicalRecords.find((user) => user._id == medicalRecordId)
   );
   console.log(currentUser);
 
   React.useEffect(() => {
     const getDataFromDB = async () => {
-      const result = await getEvent(dispatch, token);
+      const result = await getMedicalRecord(dispatch, token);
       if (result) {
         console.log("Get user data success");
       } else {
@@ -95,7 +95,7 @@ export const EventUpdateImpl = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const formNewData = {
-      event_id: eventId,
+      event_id: medicalRecordId,
       user_id: userId,
       event_name: formData.get("event_name")
         ? formData.get("event_name")
@@ -119,7 +119,7 @@ export const EventUpdateImpl = () => {
 
     console.log(formNewData);
 
-    const result = await updateEvent(
+    const result = await updateMedicalRecord(
       formNewData,
       dispatch,
       token
@@ -145,11 +145,11 @@ export const EventUpdateImpl = () => {
   return (
     <div>
       <div className="productTitleContainer">
-        <h1 className="addTitle">Event Detail Edit</h1>
+        <h1 className="addTitle">Medical Record Detail Edit</h1>
         <div>
           <Button
             variant="contained"
-            href="/event"
+            href="/medicalRecord"
             style={{ marginRight: 10 }}
             color="warning"
             // endIcon={<AddIcon />}
@@ -160,7 +160,7 @@ export const EventUpdateImpl = () => {
           {/* <button className="color-contained-button">Create</button> */}
           <Button
             variant="contained"
-            href="/createEvent"
+            href="/createMedicalRecord"
             // color="secondary"
             // endIcon={<AddIcon />}
           >
@@ -176,12 +176,12 @@ export const EventUpdateImpl = () => {
         <div className="productTopRight">
           <div className="productInfoTop">
             <img src={currentUser.user_img} alt="" className="productInfoImg" />
-            <span className="productName">Event Details</span>
+            <span className="productName">Medical Record Details</span>
           </div>
           <div className="productInfoBottom">
             <div className="productInfoItem">
               <span className="productInfoKey">Event ID:</span>
-              <span className="productInfoValue">{eventId}</span>
+              <span className="productInfoValue">{medicalRecordId}</span>
             </div>
             <div className="productInfoItem">
               <span className="productInfoKey">Event Name:</span>

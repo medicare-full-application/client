@@ -8,7 +8,7 @@ import app from "../../firebase";
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { addEvent } from "../../redux/eventApiCalls";
+import { addMedicalRecord } from "../../redux/medicalRecordApiCalls";
 import {
   getStorage,
   ref,
@@ -16,7 +16,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 
-export const EventCreateImpl = () => {
+export const MedicalRecordCreateImpl = () => {
   const [type, settype] = useState("");
   const [inputs, setInputs] = useState({});
   const [file, setFile] = useState(null);
@@ -122,24 +122,24 @@ export const EventCreateImpl = () => {
               event_image: downloadURL,
             };
 
-            const status = addEvent(userData, token);
+            const status = addMedicalRecord(userData, token);
 
             if (status) {
               Swal.fire({
                 title: "Success!",
-                text: "Event added success!",
+                text: "Medical Record added success!",
                 icon: "success",
                 confirmButtonText: "Ok",
                 confirmButtonColor: "#378cbb",
                 // showConfirmButton: false,
                 // timer: 2000,
               });
-              navigate("/event");
+              navigate("/medicalRecord");
             } else {
               Swal.fire({
                 icon: "error",
                 title: "Oops...",
-                text: "Event added unsuccess!",
+                text: "Medical Record added unsuccess!",
               });
             }
           });
@@ -175,9 +175,9 @@ export const EventCreateImpl = () => {
     <Grid container direction="column">
       <Grid container direction="row" justifyContent="space-between">
         <Grid item xs={6}>
-          <Typography variant="h3">Create Event</Typography>
+          <Typography variant="h3">Create Medical Record</Typography>
         </Grid>
-        <Button variant="contained" href="/event" startIcon={<ArrowBackIcon />}>
+        <Button variant="contained" href="/medicalRecord" startIcon={<ArrowBackIcon />}>
           Back
         </Button>
       </Grid>

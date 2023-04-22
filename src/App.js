@@ -5,23 +5,20 @@ import { red } from '@mui/material/colors';
 import Login from "./pages/Login";
 import { Dashboard } from "./pages/Dashboard";
 import { AdvertisementList } from "./pages/advertisement/AdvertisementList";
-import { EventList } from "./pages/event/EventList";
-import { PostList } from "./pages/post/PostList";
 import { UserList } from "./pages/user/UserList";
 import { UserCreate } from "./pages/user/UserCreate";
 import { UserUpdate } from "./pages/user/UserUpdate";
 import { Profile } from "./pages/user/Profile";
 import { UserAdminList } from "./pages/user/UserAdminList";
 import { UserAdminUpdate } from "./pages/user/UserAdminUpdate";
-import { PostUpdate } from "./pages/post/PostUpdate";
 import { NotFoundPage } from "./pages/NotFoundPage";
-import { EventUpdate } from "./pages/event/EventUpdate";
-import { EventCreate } from "./pages/event/EventCreate";
-import { PostCreate } from "./pages/post/PostCreate";
+import { MedicalRecordUpdate } from "./pages/medicalRecord/MedicalRecordUpdate";
+import { MedicalRecordCreate } from "./pages/medicalRecord/MedicalRecordCreate";
 import { AdvertisementUpdate } from "./pages/advertisement/AdvertisementUpdate";
 import { AdvertisementCreate } from "./pages/advertisement/AdvertisementCreate";
 import { UserManagement } from "./pages/userManagement/UserManagement";
 import { ProfileUpdate } from "./pages/user/ProfileUpdate";
+import { MedicalRecordList } from "./pages/medicalRecord/MedicalRecordList";
 
 function App() {
   const theme = createTheme({
@@ -73,14 +70,10 @@ function App() {
           <Route path="/advertisement" element={<AdvertisementList />} />
           <Route path="/updateAdvertisement/:id" element={<AdvertisementUpdate />} />
           <Route path="/createAdvertisement" element={<AdvertisementCreate />} />
-          {/* event */}
-          <Route path="/event" element={<EventList />} />
-          <Route path="/updateEvent/:id" element={<EventUpdate />} />
-          <Route path="/createEvent" element={<EventCreate />} />
-          {/* post */}
-          <Route path="/post" element={<PostList />} />
-          <Route path="/createPost" element={<PostCreate />} />
-          <Route path="/updatePost/:id" element={<PostUpdate />} />
+          {/* MedicalRecord */}
+          <Route path="/medicalRecord" element={<MedicalRecordList />} />
+          <Route path="/updateMedicalRecord/:id" element={<MedicalRecordUpdate />} />
+          <Route path="/createMedicalRecord/:id" element={<MedicalRecordCreate />} />
 
           {/* user management */}
           <Route path="/userManagement/:id" element={<UserManagement />} />

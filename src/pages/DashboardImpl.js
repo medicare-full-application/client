@@ -2,13 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import FeaturedInfo from "../components/featuredInfo/FeaturedInfo";
 import Charts from "../components/charts/Charts";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAdminUsers,
-  getAdminUsersDummy,
-  getUsers,
-  getUsersDummy,
-} from "../redux/userApiCalls";
-import { getEvent, getEventDummy } from "../redux/eventApiCalls";
+
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 

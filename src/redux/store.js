@@ -1,6 +1,6 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import userReducer from "./userRedux";
-import eventReducer from "./eventRedux";
+import medicalRecordReducer from "./medicalRecordRedux";
 import postReducer from "./postRedux";
 import advertisementReducer from "./advertisementRedux";
 import permissionReducer from "./permissionRedux";
@@ -24,7 +24,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   user: userReducer,
-  event: eventReducer,
+  medicalRecord: medicalRecordReducer,
   post: postReducer,
   advertisement:advertisementReducer,
   permissionData:permissionReducer,

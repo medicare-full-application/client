@@ -1,15 +1,15 @@
 import React from 'react'
-import MainHeader from '../../components/MainHeader'
 import { Grid } from "@mui/material";
-import { PostCreateImpl } from './PostCreateImpl';
+import MainHeader from '../../components/MainHeader';
+import { MedicalRecordListImpl } from './MedicalRecordListImpl';
 
-export const PostCreate = () => {
+export const MedicalRecordList = () => {
   return (
     <React.Fragment>
       <MainHeader value={0} />
       <Grid container spacing={2} sx={{ pt: "100px", px: 5 }}>
         <Grid item xs={12}>
-          <PostCreateImpl />
+          <MedicalRecordListImpl />
         </Grid>
       </Grid>
     </React.Fragment>

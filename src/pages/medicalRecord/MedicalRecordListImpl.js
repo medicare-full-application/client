@@ -4,6 +4,7 @@ import { Box, Button, Chip, Grid } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Swal from "sweetalert2";
@@ -13,19 +14,22 @@ import { useNavigate } from "react-router-dom";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import CelebrationIcon from "@mui/icons-material/Celebration";
-import { deleteEvent, getEvent } from "../../redux/eventApiCalls";
+import {
+  deleteMedicalRecord,
+  getMedicalRecord,
+} from "../../redux/medicalRecordApiCalls";
 import LinearProgress from "@mui/material/LinearProgress";
-import { removeEvents } from "../../redux/eventRedux";
+import { removeMedicalRecords } from "../../redux/medicalRecordRedux";
 
-export const EventListImpl = () => {
+export const MedicalRecordListImpl = () => {
   const [loading, setLoading] = useState(true);
   const [trigger, setTrigger] = useState("s");
   const [deleteTrigger, setDeleteTrigger] = useState("s");
   const token = useSelector((state) => state.user.token);
-  const events = useSelector((state) => state.event.events);
-  const permissionsData = useSelector(
-    (state) => state.permissionData.permissionsData
+  const medicalRecords = useSelector(
+    (state) => state.medicalRecord.medicalRecords
   );
+
   //   const [deleteTrigger, setDeleteTrigger] = React.useState("");
   const [rows, setRows] = React.useState([]);
 
@@ -34,8 +38,8 @@ export const EventListImpl = () => {
 
   React.useEffect(() => {
     const getDataFromDB = async () => {
-      dispatch(removeEvents());
-      const result = await getEvent(dispatch, token);
+      dispatch(removeMedicalRecords());
+      const result = await getMedicalRecord(dispatch, token);
       if (result) {
         console.log("Get user data success");
         setTrigger(trigger + "s");
@@ -50,16 +54,17 @@ export const EventListImpl = () => {
   React.useEffect(() => {
     const getNormalUserData = async () => {
       let rowData = [];
-      events.map(
+      medicalRecords.map(
         (item) => {
           // if (item.status) {
           rowData.push({
-            id: item.event_id,
-            col1: item.event_name,
-            col2: item.event_create_date,
-            col3: item.description,
-            col4: item.price,
-            col5: item.user_id,
+            id: item._id,
+            col1: item.medicalCondition,
+            col2: item.date,
+            col3: item.reportAdded,
+            col4: item.medicalReport,
+            col5: item.prescription,
+
             col6: item.event_location,
             col7: item.event_date,
             col8: item.event_time,
@@ -72,7 +77,7 @@ export const EventListImpl = () => {
       setRows(rowData);
     };
     getNormalUserData();
-  }, [trigger, dispatch, events, deleteTrigger]);
+  }, [trigger, dispatch, deleteTrigger]);
 
   const deleteItem = (id) => {
     Swal.fire({
@@ -86,14 +91,18 @@ export const EventListImpl = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         // alert(id);
-        const status = await deleteEvent(id, dispatch, token);
+        const status = await deleteMedicalRecord(id, dispatch, token);
         if (status) {
           setDeleteTrigger(deleteTrigger + "z");
-          Swal.fire("Deleted!", "Your event has been deleted.", "success");
+          Swal.fire(
+            "Deleted!",
+            "Your MedicalRecord has been deleted.",
+            "success"
+          );
         } else {
           Swal.fire(
             "Can't Delete!",
-            "Your event has not been deleted.",
+            "Your MedicalRecord has not been deleted.",
             "error"
           );
         }
@@ -103,7 +112,18 @@ export const EventListImpl = () => {
 
   const updateItem = (id) => {
     console.log(id);
-    navigate(`/updateEvent/${id}`);
+    navigate(`/updateMedicalRecord/${id}`);
+  };
+
+  const createMedicalRecord = (id) => {
+    navigate(`/createMedicalRecord/${id}`);
+  };
+
+  const viewPrescription = (id, prescriptions) => {
+    console.log(id);
+    prescriptions.map((item) => {
+      console.log(item);
+    });
   };
 
   const wishBirthday = (data) => {
@@ -130,40 +150,60 @@ export const EventListImpl = () => {
     });
   };
 
+  const viewReport = (id, url) => {
+    console.log(url);
+  };
+
   const columns = [
-    { field: "id", headerName: "Event Id", width: 300 },
+    // { field: "id", headerName: "MedicalRecord Id", width: 300 },
     {
       field: "col1",
-      headerName: "Event Name",
-      width: 220,
+      headerName: "Medical Condition",
+      width: 150,
       renderCell: (params) => {
         return (
           <div className="productListItem">
-            <img className="productListImg" src={params.row.col10} alt="" />
+            {/* <img className="productListImg" src={params.row.col10} alt="" /> */}
             {params.row.col1}
           </div>
         );
       },
     },
-    { field: "col3", headerName: "Description", width: 180 },
-    { field: "col6", headerName: "Location", width: 180 },
-    { field: "col7", headerName: "Date", width: 180 },
-    { field: "col8", headerName: "Time", width: 180 },
+    { field: "col2", headerName: "Date", width: 180 },
     {
-      field: "col9",
-      headerName: "Event Status",
+      field: "col5",
+      headerName: "View Prescription",
       width: 150,
+      renderCell: (params) => {
+        return (
+          <>
+            <IconButton
+              aria-label="edit"
+              size="large"
+              color="warning"
+              onClick={() => viewPrescription(params.row.id, params.row.col5)}
+            >
+              <VisibilityIcon />
+            </IconButton>
+          </>
+        );
+      },
+    },
+    {
+      field: "col3",
+      headerName: "View Report",
+      width: 130,
       renderCell: (params) => {
         return (
           <>
             {/* params.row.isCancel */}
             <Stack direction="row" alignItems="center" spacing={1}>
-              {params.row.col9 ? (
+              {params.row.col3 ? (
                 <IconButton
                   aria-label="edit"
                   size="large"
                   color="success"
-                  onClick={() => changeItem(params.row.id)}
+                  onClick={() => viewReport(params.row.id, params.row.col4)}
                 >
                   <CheckIcon />
                 </IconButton>
@@ -172,7 +212,7 @@ export const EventListImpl = () => {
                   aria-label="delete"
                   size="large"
                   color="error"
-                  onClick={() => changeItem(params.row.id)}
+                  // onClick={() => changeItem(params.row.id)}
                 >
                   <ClearIcon />
                 </IconButton>
@@ -185,37 +225,38 @@ export const EventListImpl = () => {
     {
       field: "action",
       headerName: "Action",
-      width: 200,
+      width: 250,
       renderCell: (params) => {
         return (
           <>
             {/* params.row.isCancel */}
             <Stack direction="row" alignItems="center" spacing={1}>
-              {permissionsData.update_events ? (
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="success"
-                  onClick={() => updateItem(params.row.id)}
-                >
-                  <EditIcon />
-                </IconButton>
-              ) : (
-                <></>
-              )}
+              <IconButton
+                aria-label="edit"
+                size="large"
+                color="success"
+                onClick={() => updateItem(params.row.id)}
+              >
+                <EditIcon />
+              </IconButton>
 
-              {permissionsData.delete_events ? (
-                <IconButton
-                  aria-label="delete"
-                  size="large"
-                  color="error"
-                  onClick={() => deleteItem(params.row.id)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              ) : (
-                <></>
-              )}
+              <IconButton
+                aria-label="delete"
+                size="large"
+                color="error"
+                onClick={() => deleteItem(params.row.id)}
+              >
+                <DeleteIcon />
+              </IconButton>
+
+              <Button
+                variant="contained"
+                // color="secondary"
+                endIcon={<AddIcon />}
+                onClick={() => createMedicalRecord(params.row.id)}
+              >
+                Create
+              </Button>
             </Stack>
           </>
         );
@@ -243,10 +284,9 @@ export const EventListImpl = () => {
             alignItems="center"
           >
             <div>
-              <h2>Events</h2>
+              <h2>Medical Records</h2>
             </div>
-            <div>
-              {permissionsData.create_events ? (
+            {/* <div>
                 <Button
                   variant="contained"
                   href="/createEvent"
@@ -255,10 +295,7 @@ export const EventListImpl = () => {
                 >
                   Create
                 </Button>
-              ) : (
-                <></>
-              )}
-            </div>
+            </div> */}
 
             {/* <Button variant="contained">Contained1</Button> */}
           </Grid>

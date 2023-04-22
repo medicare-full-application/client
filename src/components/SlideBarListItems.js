@@ -34,7 +34,7 @@ export const SlideBarListItems = () => {
       {
         id: "leftbar-listItem-3",
         listName: "All Medical Records",
-        link: "/userAdmin",
+        link: "/medicalRecord",
         icon: <BookmarksIcon />,
         hasExpand: false,
         name: "all_medical_records",
