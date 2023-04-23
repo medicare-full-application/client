@@ -22,11 +22,9 @@ export const UserListImpl = () => {
   const [loading, setLoading] = useState(true);
   const [trigger, setTrigger] = useState("s");
   const token = useSelector((state) => state.user.token);
+  const userId = useSelector((state) => state.user.currentUser._id);
   // const userType = useSelector((state) => state.user.userType);
   const otherUsers = useSelector((state) => state.user.otherUsers);
-  const permissionsData = useSelector(
-    (state) => state.permissionData.permissionsData
-  );
   //   const [deleteTrigger, setDeleteTrigger] = React.useState("");
   const [rows, setRows] = React.useState([]);
 
@@ -51,25 +49,31 @@ export const UserListImpl = () => {
   React.useEffect(() => {
     const getNormalUserData = async () => {
       let rowData = [];
-      otherUsers.map(
-        (item) => {
-          // if (item.status) {
-          rowData.push({
-            id: item._id,
-            col1: item.firstName,
-            col2: item.lastName,
-            col3: item.NIC,
-            col4: item.imageUrl,
-            col5: item.haveChildren,
-            col6: item.address,
-            col7: item.contactNo,
-            col8: item.email,
-            col9: item.userStatus,
-            col10: item.dateOfBirth,
-          });
-        }
-        // }
-      );
+      let flag = false;
+      let doctorIDData = null;
+      otherUsers.map((item) => {
+        item.doctorIds.map((doctorId) => {
+          if (doctorId === userId) {
+            flag = true;
+            doctorIDData = doctorId;
+          }
+        });
+        rowData.push({
+          id: item._id,
+          col1: item.firstName,
+          col2: item.lastName,
+          col3: item.NIC,
+          col4: item.imageUrl,
+          col5: item.haveChildren,
+          col6: item.address,
+          col7: item.contactNo,
+          col8: item.email,
+          col9: item.userStatus,
+          col10: item.dateOfBirth,
+          flag: item.flag,
+          doctorId: item.doctorIDData,
+        });
+      });
       setRows(rowData);
     };
     getNormalUserData();
@@ -230,40 +234,40 @@ export const UserListImpl = () => {
     //     );
     //   },
     // },
-    // {
-    //   field: "action",
-    //   headerName: "Action",
-    //   width: 200,
-    //   renderCell: (params) => {
-    //     return (
-    //       <>
-    //         {/* params.row.isCancel */}
-    //         <Stack direction="row" alignItems="center" spacing={1}>
-    //           <IconButton
-    //             aria-label="edit"
-    //             size="large"
-    //             color="success"
-    //             onClick={() => updateItem(params.row.id)}
-    //           >
-    //             <EditIcon />
-    //           </IconButton>
-
-    //           {/* <IconButton
-    //             aria-label="edit"
-    //             size="large"
-    //             color="success"
-    //             onClick={() => updatePermission(params.row.id)}
-    //           >
-    //             <AdminPanelSettingsIcon />
-    //           </IconButton> */}
-    //           {/* <IconButton aria-label="delete" size="large" color="error" onClick={() => deleteItem(params.row.id)}>
-    //             <DeleteIcon />
-    //           </IconButton> */}
-    //         </Stack>
-    //       </>
-    //     );
-    //   },
-    // },
+    {
+      field: "action",
+      headerName: "Action",
+      width: 200,
+      renderCell: (params) => {
+        return (
+          <>
+            {params.row.flag ? (
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Button
+                  variant="contained"
+                  // color="secondary"
+                  endIcon={<AddIcon />}
+                  // onClick={() => createMedicalRecord(params.row.id)}
+                >
+                  View Patient
+                </Button>
+              </Stack>
+            ) : (
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  endIcon={<AddIcon />}
+                  // onClick={() => createMedicalRecord(params.row.id)}
+                >
+                  Request
+                </Button>
+              </Stack>
+            )}
+          </>
+        );
+      },
+    },
   ];
   return (
     <Box

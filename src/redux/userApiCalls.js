@@ -17,6 +17,8 @@ import {
   addUserSuccess,
   addUserFailure,
   currentUserSet,
+  addMonthlyIncomeSuccess,
+  addTotalIncomeSuccess
 } from "./userRedux";
 import { publicRequest, userRequest } from "../requestMethods";
 import Swal from "sweetalert2";
@@ -194,6 +196,42 @@ export const updateUserPassword = async (loginId, User, dispatch, token) => {
 
 export const logOutUser = async (dispatch) => {
   dispatch(logout());
+};
+
+export const getMonthlyIncomeFromDoctor = async (id, year, month, dispatch, token) => {
+  dispatch(updateUserStart());
+  try {
+    const res = await publicRequest.get(`/user/stats/income/${id}/${year}/${month}`, {
+      headers: {
+        "Content-Type": "application/json",
+        token: `Bearer ${token}`,
+      },
+    });
+    console.log(res);
+    dispatch(addMonthlyIncomeSuccess(res.data[0].totalIncome));
+    return 1;
+  } catch (err) {
+    dispatch(updateUserFailure());
+    return 0;
+  }
+};
+
+export const getTotalIncomeFromDoctor = async (id, dispatch, token) => {
+  dispatch(updateUserStart());
+  try {
+    const res = await publicRequest.get(`/user/stats/income/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        token: `Bearer ${token}`,
+      },
+    });
+    console.log(res);
+    dispatch(addTotalIncomeSuccess(res.data[0].result));
+    return 1;
+  } catch (err) {
+    dispatch(updateUserFailure());
+    return 0;
+  }
 };
 
 // export const addUserWithAuth = async (User, dispatch) => {

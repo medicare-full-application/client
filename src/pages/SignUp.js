@@ -101,6 +101,9 @@ export default function SignUp() {
   const [medicalRegNoError, setMedicalRegNoError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
 
+  const [pharmacyRegNoError, setPharmacyRegNoError] = React.useState(false);
+  const [pharmacyNameError, setPharmacyNameError] = React.useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -114,6 +117,7 @@ export default function SignUp() {
     console.log(event.target.name);
     setUserType(event.target.name);
     setValue(newValue);
+    setInputs([]);
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -144,6 +148,7 @@ export default function SignUp() {
       } else if (!data.get("medicalRegNo")) {
         setMedicalRegNoError(true);
       } else if (!data.get("password")) {
+        setPasswordError(true);
       } else {
         let doctor = inputs;
         const userData = {
@@ -153,7 +158,7 @@ export default function SignUp() {
             userType: userType,
             userStatus: true,
           },
-          doctor
+          doctor,
         };
         console.log(userData);
 
@@ -175,6 +180,7 @@ export default function SignUp() {
                 "User registration completed!",
                 "success"
               );
+              navigate("/");
             } else {
               Swal.fire(
                 "Doctor Registration!",
@@ -187,8 +193,121 @@ export default function SignUp() {
         });
       }
     } else if (userType === "Patient") {
+      if (!data.get("firstName")) {
+        setFirstNameError(true);
+      } else if (!data.get("lastName")) {
+        setLastNameError(true);
+      } else if (!data.get("email")) {
+        setEmailError(true);
+      } else if (!data.get("address")) {
+        setAddressError(true);
+      } else if (!data.get("contactNo")) {
+        setContactError(true);
+      } else if (!data.get("dateOfBirth")) {
+        setDobError(true);
+      } else if (!data.get("NIC")) {
+        setNicError(true);
+      } else if (!data.get("password")) {
+        setPasswordError(true);
+      } else {
+        let patient = inputs;
+        const userData = {
+          user: {
+            email: data.get("email"),
+            password: data.get("password"),
+            userType: userType,
+            userStatus: true,
+          },
+          patient,
+        };
+        console.log(userData);
+
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#378cbb",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, Register!",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            const result = await userRegister("Patient", userData);
+            if (result) {
+              console.log("User registration completed!");
+              Swal.fire(
+                "Patient Registration!",
+                "User registration completed!",
+                "success"
+              );
+              navigate("/");
+            } else {
+              Swal.fire(
+                "Patient Registration!",
+                "User registration uncompleted!",
+                "warning"
+              );
+              console.log("Get user data unsuccess");
+            }
+          }
+        });
+      }
     } else if (userType === "Pharmacy") {
-    } else if (userType === "Admin") {
+      if (!data.get("pharmacyName")) {
+        setPharmacyNameError(true);
+      } else if (!data.get("pharmacyRegNo")) {
+        setPharmacyRegNoError(true);
+      } else if (!data.get("email")) {
+        setEmailError(true);
+      } else if (!data.get("address")) {
+        setAddressError(true);
+      } else if (!data.get("contactNo")) {
+        setContactError(true);
+      } else if (!data.get("password")) {
+        setPasswordError(true);
+      } else {
+        let pharmacist = inputs;
+        const userData = {
+          user: {
+            email: data.get("email"),
+            password: data.get("password"),
+            userType: userType,
+            userStatus: true,
+          },
+          pharmacist,
+        };
+        console.log(userData);
+
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#378cbb",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, Register!",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            const result = await userRegister("Pharmacist", userData);
+            if (result) {
+              console.log("Pharmacy registration completed!");
+              Swal.fire(
+                "Pharmacy Registration!",
+                "User registration completed!",
+                "success"
+              );
+              navigate("/");
+            } else {
+              Swal.fire(
+                "Pharmacy Registration!",
+                "User registration uncompleted!",
+                "warning"
+              );
+              console.log("Get user data unsuccess");
+            }
+          }
+        });
+      }
     }
 
     console.log(inputs);
@@ -250,13 +369,6 @@ export default function SignUp() {
                 name="Pharmacy"
                 {...a11yProps(2)}
                 icon={<VaccinesIcon />}
-                iconPosition="start"
-              />
-              <Tab
-                label="Admin"
-                name="Admin"
-                {...a11yProps(3)}
-                icon={<AdminPanelSettingsIcon />}
                 iconPosition="start"
               />
             </Tabs>
@@ -465,13 +577,297 @@ export default function SignUp() {
               </Grid>
             </TabPanel>
             <TabPanel value={value} index={1}>
-              Item Two
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    error={firstNameError}
+                    autoComplete="given-name"
+                    name="firstName"
+                    required
+                    fullWidth
+                    id="firstName"
+                    label="First Name"
+                    autoFocus
+                    onChange={(e) => {
+                      setFirstNameError(false);
+                      handleChangeData(e);
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    error={lastNameError}
+                    required
+                    fullWidth
+                    id="lastName"
+                    label="Last Name"
+                    name="lastName"
+                    autoComplete="family-name"
+                    onChange={(e) => {
+                      setLastNameError(false);
+                      handleChangeData(e);
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    error={emailError}
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    onChange={(e) => {
+                      setEmailError(false);
+                      handleChangeData(e);
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    error={addressError}
+                    required
+                    fullWidth
+                    id="address"
+                    label="Address"
+                    name="address"
+                    autoComplete="address"
+                    onChange={(e) => {
+                      setAddressError(false);
+                      handleChangeData(e);
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    error={contactError}
+                    required
+                    fullWidth
+                    id="contactNo"
+                    label="Contact Number"
+                    name="contactNo"
+                    autoComplete="mobileNo"
+                    onChange={(e) => {
+                      setContactError(false);
+                      handleChangeData(e);
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    error={dobError}
+                    focused
+                    required
+                    fullWidth
+                    id="dateOfBirth"
+                    label="Date of Birth"
+                    name="dateOfBirth"
+                    autoComplete="dateOfBirth"
+                    type="date"
+                    onChange={(e) => {
+                      setDobError(false);
+                      handleChangeData(e);
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    error={nicError}
+                    autoComplete="nic"
+                    name="NIC"
+                    required
+                    fullWidth
+                    id="NIC"
+                    label="NIC"
+                    // autoFocus
+                    onChange={(e) => {
+                      setNicError(false);
+                      handleChangeData(e);
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <FormControl sx={{ width: "100%" }} variant="outlined">
+                    <InputLabel
+                      htmlFor="password"
+                      name="password"
+                      id="password"
+                    >
+                      Password
+                    </InputLabel>
+                    <OutlinedInput
+                      error={passwordError}
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      label="Password"
+                      onChange={(e) => {
+                        setPasswordError(false);
+                        handleChangeData(e);
+                      }}
+                    />
+                  </FormControl>
+                </Grid>
+              </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign Up
+              </Button>
+              <Grid container justifyContent="flex-end">
+                <Grid item>
+                  <Link href="/" variant="body2">
+                    Already have an account? Sign in
+                  </Link>
+                </Grid>
+              </Grid>
             </TabPanel>
             <TabPanel value={value} index={2}>
-              Item Three
-            </TabPanel>
-            <TabPanel value={value} index={3}>
-              Item Four
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    error={pharmacyNameError}
+                    required
+                    fullWidth
+                    id="pharmacyName"
+                    label="Pharmacy Name"
+                    name="pharmacyName"
+                    autoComplete="pharmacyName"
+                    onChange={(e) => {
+                      setPharmacyNameError(false);
+                      handleChangeData(e);
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    error={emailError}
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    onChange={(e) => {
+                      setEmailError(false);
+                      handleChangeData(e);
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    error={addressError}
+                    required
+                    fullWidth
+                    id="address"
+                    label="Address"
+                    name="address"
+                    autoComplete="address"
+                    onChange={(e) => {
+                      setAddressError(false);
+                      handleChangeData(e);
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    error={contactError}
+                    required
+                    fullWidth
+                    id="contactNo"
+                    label="Contact Number"
+                    name="contactNo"
+                    autoComplete="mobileNo"
+                    onChange={(e) => {
+                      setContactError(false);
+                      handleChangeData(e);
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField
+                    error={pharmacyRegNoError}
+                    required
+                    fullWidth
+                    id="pharmacyRegNo"
+                    label="Medical Reg No"
+                    name="pharmacyRegNo"
+                    autoComplete="pharmacyRegNo"
+                    onChange={(e) => {
+                      setPharmacyRegNoError(false);
+                      handleChangeData(e);
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl sx={{ width: "100%" }} variant="outlined">
+                    <InputLabel
+                      htmlFor="password"
+                      name="password"
+                      id="password"
+                    >
+                      Password
+                    </InputLabel>
+                    <OutlinedInput
+                      error={passwordError}
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      label="Password"
+                      onChange={(e) => {
+                        setPasswordError(false);
+                        handleChangeData(e);
+                      }}
+                    />
+                  </FormControl>
+                </Grid>
+              </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign Up
+              </Button>
+              <Grid container justifyContent="flex-end">
+                <Grid item>
+                  <Link href="/" variant="body2">
+                    Already have an account? Sign in
+                  </Link>
+                </Grid>
+              </Grid>
             </TabPanel>
           </Box>
         </Box>

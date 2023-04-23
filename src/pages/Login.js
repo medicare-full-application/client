@@ -43,16 +43,17 @@ export default function Login() {
   // const user = useSelector((state) => state.user.currentUser);
   // let userError = useSelector((state) => state.user.error);
   let token = useSelector((state) => state.user.token);
+  let userType = useSelector((state) => state.user.userType);
   const dispatch = useDispatch();
 
-  React.useEffect(()=>{
-    const checkUserExist = ()=>{
-      if(!(token == null)){
+  React.useEffect(() => {
+    const checkUserExist = () => {
+      if (!(token == null)) {
         navigate("/dashboard");
       }
-    }
+    };
     checkUserExist();
-  },[]);
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -67,7 +68,17 @@ export default function Login() {
     const result = await login(dispatch, loginData);
     console.log(result);
     if (result) {
-      navigate("/dashboard");
+      if (userType === "Doctor") {
+        navigate("/doctorDashboard");
+      } else if (userType === "Patient") {
+        navigate("/patientDashboard");
+      } else if (userType === "Pharmacist") {
+        navigate("/pharmacistDashboard");
+      } else if (userType === "Admin") {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
     } else {
       Swal.fire({
         icon: "error",
@@ -87,7 +98,8 @@ export default function Login() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: "url(https://res.cloudinary.com/midefulness/image/upload/v1681233607/medicare/415_iuy7yk.jpg)",
+            backgroundImage:
+              "url(https://res.cloudinary.com/midefulness/image/upload/v1681233607/medicare/415_iuy7yk.jpg)",
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"

@@ -19,7 +19,7 @@ export const SlideBarListItems = () => {
         id: "leftbar-listItem-1",
         listName: "Dashboard",
         icon: <BookmarksIcon />,
-        link: "/dashboard",
+        link: "/doctorDashboard",
         name: "dashboard",
       },
       {
@@ -70,7 +70,7 @@ export const SlideBarListItems = () => {
         id: "leftbar-listItem-1",
         listName: "Dashboard",
         icon: <BookmarksIcon />,
-        link: "/dashboard",
+        link: "/patientDashboard",
         name: "dashboard",
       }
     ];
@@ -80,7 +80,7 @@ export const SlideBarListItems = () => {
         id: "leftbar-listItem-1",
         listName: "Dashboard",
         icon: <BookmarksIcon />,
-        link: "/dashboard",
+        link: "/pharmacistDashboard",
         name: "dashboard",
       }
     ];

@@ -12,6 +12,8 @@ const userSlice = createSlice({
     authorities: [],
     token: null,
     error: false,
+    monthlyIncome: null,
+    totalIncome: null,
   },
   reducers: {
     loginStart: (state) => {
@@ -38,6 +40,10 @@ const userSlice = createSlice({
       state.token = null;
       state.authorities = [];
       state.adminUsers = null;
+      state.userType = null;
+      state.loginId = null;
+      state.monthlyIncome = null;
+      state.totalIncome = null;
     },
     removeAdminUsers: (state) => {
       state.adminUsers = null;
@@ -112,6 +118,13 @@ const userSlice = createSlice({
       state.isFetching = false;
       state.error = true;
     },
+
+    addMonthlyIncomeSuccess: (state, action) => {
+      state.monthlyIncome = action.payload;
+    },
+    addTotalIncomeSuccess: (state, action) => {
+      state.totalIncome = action.payload;
+    },
   },
 });
 
@@ -136,5 +149,7 @@ export const {
   removeAdminUsers,
   removeOtherUsers,
   currentUserSet,
+  addMonthlyIncomeSuccess,
+  addTotalIncomeSuccess
 } = userSlice.actions;
 export default userSlice.reducer;

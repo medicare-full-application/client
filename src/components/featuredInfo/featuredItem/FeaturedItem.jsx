@@ -13,11 +13,11 @@ const FeaturedItem = (props) => {
           {/* {props.isDowngrade ? ( -1.4 <ArrowDownward className="featuredIcon negative" /> ) : -1.4 <ArrowDownward className="featuredIcon negative" />} */}
           {/* {Math.floor(props.percentage)}{" "} */}
           {props.percentage}{" "}
-          {props.isDowngrade ? (
+          {/* {props.isDowngrade ? (
             <ArrowDownwardIcon className="featuredIcon negative" />
           ) : (
             <ArrowUpwardIcon className="featuredIcon" />
-          )}
+          )} */}
         </span>
       </div>
       <span className="featuredSub">{props.text}</span>

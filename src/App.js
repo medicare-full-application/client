@@ -20,6 +20,9 @@ import { UserManagement } from "./pages/userManagement/UserManagement";
 import { ProfileUpdate } from "./pages/user/ProfileUpdate";
 import { MedicalRecordList } from "./pages/medicalRecord/MedicalRecordList";
 import SignUp from "./pages/SignUp";
+import { DoctorDashboard } from "./pages/userDashboards.js/doctor/DoctorDashboard";
+import { PatientDashboard } from "./pages/userDashboards.js/patient/PatientDashboard";
+import { PharmacistDashboard } from "./pages/userDashboards.js/pharmacist/PharmacistDashboard";
 
 function App() {
   const theme = createTheme({
@@ -60,6 +63,9 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/signUp" element={<SignUp />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/doctorDashboard" element={<DoctorDashboard />} />
+          <Route path="/patientDashboard" element={<PatientDashboard />} />
+          <Route path="/pharmacistDashboard" element={<PharmacistDashboard />} />
           {/* user */}
           <Route path="/user" element={<UserList />} />
           <Route path="/createUser" element={<UserCreate />} />
