@@ -107,8 +107,8 @@ export const DoctorDashboardImpl = () => {
     },
     {
       index: 3,
-      title: "Total Income",
-      number: "Rs."+totalIncome,
+      title: "Today Income",
+      number: totalIncome ? "Rs."+totalIncome : "Rs."+0,
       // percentage: -1.4,
       isDowngrade: false,
       // text: "Compared to last month",

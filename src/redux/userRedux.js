@@ -125,6 +125,20 @@ const userSlice = createSlice({
     addTotalIncomeSuccess: (state, action) => {
       state.totalIncome = action.payload;
     },
+    updateCurrentUserRequestSuccess: (state, action) => {
+      state.currentUser.requests[
+        state.currentUser.requests.findIndex(
+          (item) => item.patientId === action.payload._id
+        )
+      ] = action.payload;
+    },
+    updateOtherUserSuccess: (state, action) => {
+      state.otherUsers[
+        state.otherUsers.findIndex(
+          (item) => item._id === action.payload._id
+        )
+      ] = action.payload;
+    },
   },
 });
 
@@ -150,6 +164,7 @@ export const {
   removeOtherUsers,
   currentUserSet,
   addMonthlyIncomeSuccess,
-  addTotalIncomeSuccess
+  addTotalIncomeSuccess,
+  updateOtherUserSuccess
 } = userSlice.actions;
 export default userSlice.reducer;

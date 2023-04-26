@@ -52,6 +52,8 @@ export const UserListImpl = () => {
       let flag = false;
       let doctorIDData = null;
       otherUsers.map((item) => {
+        const isoDateString = item.dateOfBirth;
+        const dateOnlyString = isoDateString.substring(0, 10);
         item.doctorIds.map((doctorId) => {
           if (doctorId === userId) {
             flag = true;
@@ -69,7 +71,7 @@ export const UserListImpl = () => {
           col7: item.contactNo,
           col8: item.email,
           col9: item.userStatus,
-          col10: item.dateOfBirth,
+          col10: dateOnlyString,
           flag: item.flag,
           doctorId: item.doctorIDData,
         });
@@ -127,10 +129,11 @@ export const UserListImpl = () => {
 
   const columns = [
     // { field: "id", headerName: "User Id", width: 300 },
+    { field: "col3", headerName: "NIC", width: 140 },
     {
       field: "col1",
       headerName: "Full Name",
-      width: 220,
+      width: 250,
       renderCell: (params) => {
         return (
           <div className="productListItem">
@@ -140,9 +143,9 @@ export const UserListImpl = () => {
         );
       },
     },
-    { field: "col3", headerName: "NIC", width: 120 },
-    { field: "col8", headerName: "Email", width: 180 },
-    { field: "col6", headerName: "Address", width: 180 },
+
+    { field: "col8", headerName: "Email", width: 220 },
+    { field: "col6", headerName: "Address", width: 220 },
     { field: "col7", headerName: "Contact", width: 120 },
     {
       field: "col5",
@@ -188,14 +191,6 @@ export const UserListImpl = () => {
             {/* params.row.isCancel */}
             <Stack direction="row" alignItems="center" spacing={1}>
               {params.row.col10}
-              <IconButton
-                aria-label="edit"
-                size="large"
-                color="success"
-                // onClick={() => wishBirthday(params.row)}
-              >
-                <CelebrationIcon />
-              </IconButton>
             </Stack>
           </>
         );
@@ -245,6 +240,7 @@ export const UserListImpl = () => {
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Button
                   variant="contained"
+                  size="small"
                   // color="secondary"
                   endIcon={<AddIcon />}
                   // onClick={() => createMedicalRecord(params.row.id)}
@@ -256,7 +252,8 @@ export const UserListImpl = () => {
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Button
                   variant="contained"
-                  color="secondary"
+                  size="small"
+                  color="blue"
                   endIcon={<AddIcon />}
                   // onClick={() => createMedicalRecord(params.row.id)}
                 >

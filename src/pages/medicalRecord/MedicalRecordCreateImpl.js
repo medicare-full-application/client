@@ -24,22 +24,14 @@ export const MedicalRecordCreateImpl = () => {
 
   const [event_nameError, setevent_nameError] = useState(false);
   const [descriptionError, setdescriptionError] = useState(false);
-  const [event_locationError, setevent_locationError] = useState(false);
-  const [event_dateError, setevent_dateError] = useState(false);
-  const [event_timeError, setevent_timeError] = useState(false);
-  const [priceError, setpriceError] = useState(false);
 
   const [event_nameMessageError, setevent_nameMessageError] = useState("");
   const [descriptionMessageError, setdescriptionMessageError] = useState("");
-  const [emailMessageError, setEmailMessageError] = useState("");
-  const [event_locationMessageError, setevent_locationMessageError] =
-    useState("");
-  const [event_dateMessageError, setevent_dateMessageError] = useState("");
-  const [event_timeMessageError, setevent_timeMessageError] = useState("");
-  const [priceMessageError, setpriceMessageError] = useState("");
+
+  const patientId = window.location.pathname.split("/")[2];
 
   const token = useSelector((state) => state.user.token);
-  const userId = useSelector((state) => state.user.currentUser.user_id);
+  const userId = useSelector((state) => state.user.currentUser._id);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -53,34 +45,17 @@ export const MedicalRecordCreateImpl = () => {
     const data = new FormData(e.currentTarget);
 
     let formData = {
-      event_name: data.get("event_name"),
-      description: data.get("description"),
+      medicalCondition: data.get("medicalCondition"),
+      prescription: data.get("prescription"),
       user_id: userId,
-      event_location: data.get("event_location"),
-      event_date: data.get("event_date"),
-      event_time: data.get("event_time"),
-      price: data.get("price"),
-      // birthday: data.get("birthday"),
     };
 
-    if (!data.get("event_name")) {
+    if (!data.get("medicalCondition")) {
       setevent_nameError(true);
-      setevent_nameMessageError("Event Name can't be empty!");
-    } else if (!data.get("description")) {
+      setevent_nameMessageError("Medical Condition can't be empty!");
+    } else if (!data.get("prescription")) {
       setdescriptionError(true);
       setdescriptionMessageError("Description can't be empty!");
-    } else if (!data.get("event_location")) {
-      setevent_locationError(true);
-      setevent_locationMessageError("Event location can't be empty!");
-    } else if (!data.get("event_date")) {
-      setevent_dateError(true);
-      setevent_dateMessageError("Event date can't be empty!");
-    } else if (!data.get("event_time")) {
-      setevent_timeError(true);
-      setevent_timeMessageError("Event time can't be empty!");
-    } else if (!data.get("price")) {
-      setpriceError(true);
-      setpriceMessageError("Event price can't be empty!");
     } else {
 
       const fileName = new Date().getTime() + file.name;
@@ -119,7 +94,10 @@ export const MedicalRecordCreateImpl = () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             let userData = {
               ...formData,
-              event_image: downloadURL,
+              medicalReport: downloadURL,
+              recordBy: userId,
+              recordFor: patientId,
+              reportAdded: downloadURL ? true : false
             };
 
             const status = addMedicalRecord(userData, token);
@@ -145,27 +123,6 @@ export const MedicalRecordCreateImpl = () => {
           });
         }
       );
-
-      
-
-      // if (status) {
-      //   Swal.fire({
-      //     title: "Success!",
-      //     text: "Event added success!",
-      //     icon: "success",
-      //     confirmButtonText: "Ok",
-      //     confirmButtonColor: "#378cbb",
-      //     // showConfirmButton: false,
-      //     // timer: 2000,
-      //   });
-      //   navigate("/event");
-      // } else {
-      //   Swal.fire({
-      //     icon: "error",
-      //     title: "Oops...",
-      //     text: "Event added unsuccess!",
-      //   });
-      // }
     }
 
     console.log(formData);
@@ -177,7 +134,7 @@ export const MedicalRecordCreateImpl = () => {
         <Grid item xs={6}>
           <Typography variant="h3">Create Medical Record</Typography>
         </Grid>
-        <Button variant="contained" href="/medicalRecord" startIcon={<ArrowBackIcon />}>
+        <Button variant="contained" color="secondary" href="/medicalRecord" startIcon={<ArrowBackIcon />}>
           Back
         </Button>
       </Grid>
@@ -211,10 +168,10 @@ export const MedicalRecordCreateImpl = () => {
                   margin="normal"
                   required
                   fullWidth
-                  id="event_name"
-                  label="Event Name"
-                  name="event_name"
-                  autoComplete="event_name"
+                  id="medicalCondition"
+                  label="Medical Condition"
+                  name="medicalCondition"
+                  autoComplete="medicalCondition"
                   autoFocus
                   helperText={event_nameMessageError}
                   onClick={(e) => {
@@ -226,134 +183,8 @@ export const MedicalRecordCreateImpl = () => {
                   }}
                 />
               </Grid>
-              <Grid item md={sizeForm}>
-                <TextField
-                  error={descriptionError}
-                  // defaultValue={product.fullname}
-                  // variant="standard"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="description"
-                  label="Description"
-                  name="description"
-                  autoComplete="description"
-                  autoFocus
-                  helperText={descriptionMessageError}
-                  onChange={(e) => {
-                    setdescriptionError(false);
-                    setdescriptionMessageError("");
-                    // handleChange();
-                    setInputs((prev) => {
-                      return { ...prev, [e.target.name]: e.target.value };
-                    });
-                  }}
-                />
-              </Grid>
-              <Grid item md={sizeForm}>
-                <TextField
-                  error={priceError}
-                  // defaultValue={product.price}
-                  // variant="standard"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="price"
-                  label="Price"
-                  name="price"
-                  autoComplete="price"
-                  type="number"
-                  autoFocus
-                  helperText={priceMessageError}
-                  onChange={(e) => {
-                    setpriceError(false);
-                    setpriceMessageError("");
-                    setInputs((prev) => {
-                      return { ...prev, [e.target.name]: e.target.value };
-                    });
-                  }}
-                />
-              </Grid>
-
-              <Grid item md={sizeForm}>
-                <TextField
-                  error={event_locationError}
-                  // defaultValue={product.id}
-                  // variant="standard"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="event_location"
-                  label="Event Location"
-                  name="event_location"
-                  autoComplete="event_location"
-                  autoFocus
-                  helperText={event_locationMessageError}
-                  onChange={(e) => {
-                    setevent_locationError(false);
-                    setevent_locationMessageError("");
-                    setInputs((prev) => {
-                      return { ...prev, [e.target.name]: e.target.value };
-                    });
-                  }}
-                />
-              </Grid>
-
-              <Grid item md={sizeForm}>
-                <TextField
-                  error={event_dateError}
-                  // defaultValue={product.id}
-                  // variant="standard"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="event_date"
-                  label="Event Date"
-                  name="event_date"
-                  autoComplete="event_date"
-                  type="date"
-                  autoFocus
-                  helperText={event_dateMessageError}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  onChange={(e) => {
-                    setevent_dateError(false);
-                    setevent_dateMessageError("");
-                    setInputs((prev) => {
-                      return { ...prev, [e.target.name]: e.target.value };
-                    });
-                  }}
-                />
-              </Grid>
-
-              <Grid item md={sizeForm}>
-                <TextField
-                  error={event_timeError}
-                  // defaultValue={product.id}
-                  // variant="standard"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="event_time"
-                  label="Event Time"
-                  name="event_time"
-                  autoComplete="event_time"
-                  type="time"
-                  autoFocus
-                  helperText={event_timeMessageError}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  onChange={(e) => {
-                    setevent_timeError(false);
-                    setevent_timeMessageError("");
-                    setInputs((prev) => {
-                      return { ...prev, [e.target.name]: e.target.value };
-                    });
-                  }}
-                />
-              </Grid>
+              
+              
               <Grid item md={sizeForm}>
                 <TextField
                   // error={imageError}
@@ -361,10 +192,10 @@ export const MedicalRecordCreateImpl = () => {
                   // variant="standard"
                   type="file"
                   margin="normal"
-                  required
+                  // required
                   fullWidth
                   id="file"
-                  label="Image"
+                  label="Upload Medical Report"
                   name="file"
                   autoComplete="file"
                   autoFocus
@@ -379,8 +210,33 @@ export const MedicalRecordCreateImpl = () => {
                   }}
                 />
               </Grid>
+              <Grid item md={12}>
+                <TextField
+                  error={descriptionError}
+                  // defaultValue={product.fullname}
+                  // variant="standard"
+                  multiline
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="prescription"
+                  label="Prescription"
+                  name="prescription"
+                  autoComplete="prescription"
+                  autoFocus
+                  helperText={descriptionMessageError}
+                  onChange={(e) => {
+                    setdescriptionError(false);
+                    setdescriptionMessageError("");
+                    // handleChange();
+                    setInputs((prev) => {
+                      return { ...prev, [e.target.name]: e.target.value };
+                    });
+                  }}
+                />
+              </Grid>
 
-              <Grid item md={sizeForm}></Grid>
+              {/* <Grid item md={sizeForm}></Grid> */}
               <Grid
                 item
                 md={12}
@@ -394,7 +250,7 @@ export const MedicalRecordCreateImpl = () => {
                   size="large"
                   color="blue"
                 >
-                  Send
+                  Add
                 </Button>
               </Grid>
             </Grid>

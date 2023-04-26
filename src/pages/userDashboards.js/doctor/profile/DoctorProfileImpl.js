@@ -12,9 +12,9 @@ import TextField from "@mui/material/TextField";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Typography from "@mui/material/Typography";
 import Swal from "sweetalert2";
-import { updateUser } from "../../redux/userApiCalls";
+import { updateUser } from "../../../../redux/userApiCalls";
 
-export const ProfileImpl = () => {
+export const DoctorProfileImpl = () => {
   const [loading, setLoading] = useState(false);
 
   const user = useSelector((state) => state.user.currentUser);
@@ -79,7 +79,7 @@ export const ProfileImpl = () => {
         <Grid item xs={1}>
           <Button
             variant="contained"
-            href="/dashboard"
+            href="/doctorDashboard"
             style={{ marginRight: 10 }}
             color="warning"
             // endIcon={<AddIcon />}
@@ -220,7 +220,7 @@ export const ProfileImpl = () => {
                       autoFocus
                     />
                   </Grid>
-                  <Grid item md={6}>
+                  {/* <Grid item md={6}>
                     <TextField
                       defaultValue={
                         user.noOfOngoingPatients
@@ -233,8 +233,8 @@ export const ProfileImpl = () => {
                       label="No of Ongoing Patients"
                       autoFocus
                     />
-                  </Grid>
-                  <Grid item md={6}>
+                  </Grid> */}
+                  {/* <Grid item md={6}>
                     <TextField
                       defaultValue={
                         user.totalPatients ? user.totalPatients : "No Value"
@@ -245,11 +245,11 @@ export const ProfileImpl = () => {
                       label="Total Patients"
                       autoFocus
                     />
-                  </Grid>
+                  </Grid> */}
                 </>
               )}
 
-              <Grid item md={6}>
+              {/* <Grid item md={6}>
                 <TextField
                   defaultValue={user.hourRate ? user.hourRate : "No Value"}
                   variant="standard"
@@ -258,7 +258,7 @@ export const ProfileImpl = () => {
                   label="Hour Rate"
                   autoFocus
                 />
-              </Grid>
+              </Grid> */}
               <Grid item md={6}>
                 <TextField
                   defaultValue={

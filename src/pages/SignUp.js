@@ -471,7 +471,8 @@ export default function SignUp() {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     error={dobError}
-                    focused
+                    // focused
+                    autoFocus
                     required
                     fullWidth
                     id="dateOfBirth"
@@ -479,6 +480,9 @@ export default function SignUp() {
                     name="dateOfBirth"
                     autoComplete="dateOfBirth"
                     type="date"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
                     onChange={(e) => {
                       setDobError(false);
                       handleChangeData(e);

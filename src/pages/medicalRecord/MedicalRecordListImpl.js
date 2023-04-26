@@ -20,18 +20,39 @@ import {
 } from "../../redux/medicalRecordApiCalls";
 import LinearProgress from "@mui/material/LinearProgress";
 import { removeMedicalRecords } from "../../redux/medicalRecordRedux";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  // border: "2px solid #000",
+  borderRadius: "10px",
+  boxShadow: 24,
+  p: 4,
+};
 
 export const MedicalRecordListImpl = () => {
   const [loading, setLoading] = useState(true);
   const [trigger, setTrigger] = useState("s");
   const [deleteTrigger, setDeleteTrigger] = useState("s");
   const token = useSelector((state) => state.user.token);
+  const userType = useSelector((state) => state.user.userType);
+  const userId = useSelector((state) => state.user.currentUser._id);
   const medicalRecords = useSelector(
     (state) => state.medicalRecord.medicalRecords
   );
 
+  const [open, setOpen] = React.useState(false);
+
   //   const [deleteTrigger, setDeleteTrigger] = React.useState("");
   const [rows, setRows] = React.useState([]);
+  const [title, setTitle] = React.useState(null);
+  const [content, setContent] = React.useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -54,26 +75,58 @@ export const MedicalRecordListImpl = () => {
   React.useEffect(() => {
     const getNormalUserData = async () => {
       let rowData = [];
-      medicalRecords.map(
-        (item) => {
-          // if (item.status) {
-          rowData.push({
-            id: item._id,
-            col1: item.medicalCondition,
-            col2: item.date,
-            col3: item.reportAdded,
-            col4: item.medicalReport,
-            col5: item.prescription,
+      if (userType == "Patient") {
+        const filteredMedicalRecords = medicalRecords.filter(
+          (record) => record.recordFor == userId
+        );
 
-            col6: item.event_location,
-            col7: item.event_date,
-            col8: item.event_time,
-            col9: item.status,
-            col10: item.event_image,
-          });
-        }
-        // }
-      );
+        console.log(filteredMedicalRecords);
+
+        filteredMedicalRecords.map(
+          (item) => {
+            const isoDateString = item.date;
+            const dateOnlyString = isoDateString.substring(0, 10);
+            rowData.push({
+              id: item._id,
+              col1: item.medicalCondition,
+              col2: dateOnlyString,
+              col3: item.reportAdded,
+              col4: item.medicalReport,
+              col5: item.prescription,
+
+              col6: item.event_location,
+              col7: item.event_date,
+              col8: item.event_time,
+              col9: item.status,
+              col10: item.event_image,
+            });
+          }
+          // }
+        );
+      } else {
+        medicalRecords.map(
+          (item) => {
+            const isoDateString = item.date;
+            const dateOnlyString = isoDateString.substring(0, 10);
+            rowData.push({
+              id: item._id,
+              col1: item.medicalCondition,
+              col2: dateOnlyString,
+              col3: item.reportAdded,
+              col4: item.medicalReport,
+              col5: item.prescription,
+
+              col6: item.event_location,
+              col7: item.event_date,
+              col8: item.event_time,
+              col9: item.status,
+              col10: item.event_image,
+            });
+          }
+          // }
+        );
+      }
+
       setRows(rowData);
     };
     getNormalUserData();
@@ -110,6 +163,21 @@ export const MedicalRecordListImpl = () => {
     });
   };
 
+  const handleOpen = (id, prescription) => {
+    const splittedArr = prescription.split(" ");
+
+    let outputStr = "";
+    for (let i = 0; i < splittedArr.length; i += 2) {
+      outputStr += splittedArr[i] + " " + splittedArr[i + 1] + "\n";
+    }
+    console.log(outputStr);
+    setOpen(true);
+    setTitle("Prescription");
+    setContent(outputStr);
+    console.log(id);
+  };
+  const handleClose = () => setOpen(false);
+
   const updateItem = (id) => {
     console.log(id);
     navigate(`/updateMedicalRecord/${id}`);
@@ -121,6 +189,7 @@ export const MedicalRecordListImpl = () => {
 
   const viewPrescription = (id, prescriptions) => {
     console.log(id);
+
     prescriptions.map((item) => {
       console.log(item);
     });
@@ -152,6 +221,7 @@ export const MedicalRecordListImpl = () => {
 
   const viewReport = (id, url) => {
     console.log(url);
+    window.open(url, '_blank');
   };
 
   const columns = [
@@ -174,14 +244,15 @@ export const MedicalRecordListImpl = () => {
       field: "col5",
       headerName: "View Prescription",
       width: 150,
+      className: "center-align-cell",
       renderCell: (params) => {
         return (
           <>
             <IconButton
               aria-label="edit"
               size="large"
-              color="warning"
-              onClick={() => viewPrescription(params.row.id, params.row.col5)}
+              color="brown"
+              onClick={() => handleOpen(params.row.id, params.row.col5)}
             >
               <VisibilityIcon />
             </IconButton>
@@ -222,71 +293,72 @@ export const MedicalRecordListImpl = () => {
         );
       },
     },
-    {
-      field: "action",
-      headerName: "Action",
-      width: 250,
-      renderCell: (params) => {
-        return (
-          <>
-            {/* params.row.isCancel */}
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <IconButton
-                aria-label="edit"
-                size="large"
-                color="success"
-                onClick={() => updateItem(params.row.id)}
-              >
-                <EditIcon />
-              </IconButton>
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   width: 250,
+    //   renderCell: (params) => {
+    //     return (
+    //       <>
+    //         <Stack direction="row" alignItems="center" spacing={1}>
+    //           <IconButton
+    //             aria-label="edit"
+    //             size="large"
+    //             color="success"
+    //             onClick={() => updateItem(params.row.id)}
+    //           >
+    //             <EditIcon />
+    //           </IconButton>
 
-              <IconButton
-                aria-label="delete"
-                size="large"
-                color="error"
-                onClick={() => deleteItem(params.row.id)}
-              >
-                <DeleteIcon />
-              </IconButton>
+    //           <IconButton
+    //             aria-label="delete"
+    //             size="large"
+    //             color="error"
+    //             onClick={() => deleteItem(params.row.id)}
+    //           >
+    //             <DeleteIcon />
+    //           </IconButton>
 
-              <Button
-                variant="contained"
-                // color="secondary"
-                endIcon={<AddIcon />}
-                onClick={() => createMedicalRecord(params.row.id)}
-              >
-                Create
-              </Button>
-            </Stack>
-          </>
-        );
-      },
-    },
+    //           <Button
+    //             variant="contained"
+    //             color="secondary"
+    //             size="small"
+    //             endIcon={<AddIcon />}
+    //             onClick={() => createMedicalRecord(params.row.id)}
+    //           >
+    //             Create
+    //           </Button>
+    //         </Stack>
+    //       </>
+    //     );
+    //   },
+    // },
   ];
   return (
-    <Box
-      sx={{
-        height: 400,
-        width: "100%",
-        bgcolor: "#FFF",
-      }}
-    >
-      {loading ? (
-        <Box sx={{ width: "100%" }}>
-          <LinearProgress />
-        </Box>
-      ) : (
-        <div>
-          <Grid
-            container
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <div>
-              <h2>Medical Records</h2>
-            </div>
-            {/* <div>
+    <>
+      <Box
+        sx={{
+          height: 400,
+          width: "100%",
+          bgcolor: "#FFF",
+        }}
+      >
+        {loading ? (
+          <Box sx={{ width: "100%" }}>
+            <LinearProgress />
+          </Box>
+        ) : (
+          <div>
+            <Grid
+              container
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <div>
+                <h2>Medical Records</h2>
+              </div>
+              {/* <div>
                 <Button
                   variant="contained"
                   href="/createEvent"
@@ -297,14 +369,31 @@ export const MedicalRecordListImpl = () => {
                 </Button>
             </div> */}
 
-            {/* <Button variant="contained">Contained1</Button> */}
-          </Grid>
+              {/* <Button variant="contained">Contained1</Button> */}
+            </Grid>
 
-          <div style={{ marginTop: "20px" }}>
-            <TableComponent rows={rows} columns={columns} />
+            <div style={{ marginTop: "20px" }}>
+              <TableComponent rows={rows} columns={columns} />
+            </div>
           </div>
-        </div>
-      )}
-    </Box>
+        )}
+      </Box>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        keepMounted
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            {title}
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            <pre>{content}</pre>
+          </Typography>
+        </Box>
+      </Modal>
+    </>
   );
 };

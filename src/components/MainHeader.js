@@ -41,6 +41,7 @@ export default function MainHeader(props) {
   };
   const userToken = useSelector((state) => state.user.token);
   const user = useSelector((state) => state.user.currentUser);
+  const userType = useSelector((state) => state.user.userType);
 
   const navigate = useNavigate();
 
@@ -58,6 +59,18 @@ export default function MainHeader(props) {
     // navigate("/");
     window.location.href = "/";
   }
+
+  const changeProfile = () => {
+    if (userType == "Doctor") {
+      navigate("/doctorProfile");
+    } else if (userType == "Patient") {
+      navigate("/patientProfile");
+    } else if (userType == "Pharmacist") {
+      navigate("/pharmacistProfile");
+    } else if (userType == "Admin") {
+      navigate("/adminProfile");
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -83,7 +96,7 @@ export default function MainHeader(props) {
             >
               <MainTab value={tabValue} />
             </Box> */}
-            <IconButton onClick={() => navigate("/profile")}>
+            <IconButton onClick={changeProfile}>
               {/* <IconButton> */}
               <Avatar alt="Profile Picture" src={user.imageUrl} />
             </IconButton>

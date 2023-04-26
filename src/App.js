@@ -23,21 +23,32 @@ import SignUp from "./pages/SignUp";
 import { DoctorDashboard } from "./pages/userDashboards.js/doctor/DoctorDashboard";
 import { PatientDashboard } from "./pages/userDashboards.js/patient/PatientDashboard";
 import { PharmacistDashboard } from "./pages/userDashboards.js/pharmacist/PharmacistDashboard";
+import { PatientList } from "./pages/userDashboards.js/patient/patientList/PatientList";
+import { DoctorDashboardImpl } from "./pages/userDashboards.js/doctor/DoctorDashboardImpl";
+import { DoctorProfile } from "./pages/userDashboards.js/doctor/profile/DoctorProfile";
 
 function App() {
   const theme = createTheme({
     palette: {
       primary: {
-        main: "#007A31",
+        main: "#1bac6d",
       },
       secondary: {
-        main: "#52b202"
+        main: "#8ed4b4"
+      },
+      third: {
+        main: "#dadf74"
+      },
+      brown: {
+        main: "#947c74"
       },
       danger: {
         main: "#c62828"
       },
       blue: {
-        main: "#1e88e5"
+        main: "#1e88e5",
+        fontWeight: "bold",
+        color:"white"
       }
     },
     typography: {
@@ -67,11 +78,17 @@ function App() {
           <Route path="/patientDashboard" element={<PatientDashboard />} />
           <Route path="/pharmacistDashboard" element={<PharmacistDashboard />} />
           {/* user */}
-          <Route path="/user" element={<UserList />} />
+          <Route path="/patient" element={<PatientList />} />
           <Route path="/createUser" element={<UserCreate />} />
           <Route path="/updateUser/:id" element={<UserUpdate />} />
           <Route path="/updateAdminUser/:id" element={<UserAdminUpdate />} />
           <Route path="/profile" element={<Profile />} />
+
+          <Route path="/doctorProfile" element={<DoctorProfile />} />
+          <Route path="/patientProfile" element={<DoctorProfile />} />
+          <Route path="/pharmacistProfile" element={<DoctorProfile />} />
+          <Route path="/adminProfile" element={<DoctorProfile />} />
+
           <Route path="/profileUpdate" element={<ProfileUpdate />} />
           <Route path="/userAdmin" element={<UserAdminList />} />
           {/* Advertisement */}

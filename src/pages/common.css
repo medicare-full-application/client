@@ -29,3 +29,9 @@
 .productListItemData {
   margin-right: 20px;
 }
+
+.center-align-cell {
+  text-align: center;
+  align-items: center;
+  justify-items: center;
+}

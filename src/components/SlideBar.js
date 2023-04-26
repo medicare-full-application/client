@@ -60,6 +60,7 @@ function SlideBar(props) {
 
   // const listItems = SlideBarListItems(props.tabValue);
   const listItems = SlideBarListItems();
+  console.log(listItems);
 
   const drawer = (
     <Box sx={{ textAlign: "center" }}>

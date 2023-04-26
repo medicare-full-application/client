@@ -7,11 +7,9 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 // import { useSelector } from "react-redux";
 export const SlideBarListItems = () => {
-  // const userType = useSelector((state) => state.user.userType);
-  const userType = "Doctor"
-  // const [listItems, setListItems] = useState([]);
+  const userType = useSelector((state) => state.user.userType);
+
   let listItems = [];
-  // const userType = user.userrole;
 
   if (userType === "Doctor") {
     listItems = [
@@ -25,7 +23,7 @@ export const SlideBarListItems = () => {
       {
         id: "leftbar-listItem-2",
         listName: "Patients",
-        link: "/user",
+        link: "/patient",
         // link: "/doctor/patient",
         icon: <BookmarksIcon />,
         hasExpand: false,
@@ -67,28 +65,70 @@ export const SlideBarListItems = () => {
   } else if (userType === "Patient") {
     listItems = [
       {
-        id: "leftbar-listItem-1",
+        id: "leftbar-listItem-4",
         listName: "Dashboard",
         icon: <BookmarksIcon />,
         link: "/patientDashboard",
+        name: "dashboard",
+      },
+      {
+        id: "leftbar-listItem-5",
+        listName: "Doctors",
+        icon: <BookmarksIcon />,
+        link: "/doctor",
+        name: "dashboard",
+      },
+      {
+        id: "leftbar-listItem-6",
+        listName: "My Medical Records",
+        icon: <BookmarksIcon />,
+        link: "/medicalRecord",
         name: "dashboard",
       }
     ];
   } else if (userType === "Pharmacist") {
     listItems = [
       {
-        id: "leftbar-listItem-1",
+        id: "leftbar-listItem-7",
         listName: "Dashboard",
         icon: <BookmarksIcon />,
         link: "/pharmacistDashboard",
         name: "dashboard",
-      }
+      },
+      {
+        id: "leftbar-listItem-7",
+        listName: "Patients",
+        icon: <BookmarksIcon />,
+        link: "/patient",
+        name: "dashboard",
+      },
+      // {
+      //   id: "leftbar-listItem-8",
+      //   listName: "Dashboard",
+      //   icon: <BookmarksIcon />,
+      //   link: "/pharmacistDashboard",
+      //   name: "dashboard",
+      // }
     ];
   } else if (userType === "Admin") {
     listItems = [
       {
-        id: "leftbar-listItem-1",
+        id: "leftbar-listItem-9",
         listName: "Dashboard",
+        icon: <BookmarksIcon />,
+        link: "/dashboard",
+        name: "dashboard",
+      },
+      {
+        id: "leftbar-listItem-10",
+        listName: "All Users",
+        icon: <BookmarksIcon />,
+        link: "/dashboard",
+        name: "dashboard",
+      },
+      {
+        id: "leftbar-listItem-10",
+        listName: "Add News",
         icon: <BookmarksIcon />,
         link: "/dashboard",
         name: "dashboard",
