@@ -22,7 +22,10 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import LinearProgress from "@mui/material/LinearProgress";
 import { removeOtherUsers } from "../../../../redux/userRedux";
 import { removeMedicalRecords } from "../../../../redux/medicalRecordRedux";
-import { getMedicalRecord } from "../../../../redux/medicalRecordApiCalls";
+import {
+  getMedicalRecord,
+  updateMedicalRecord,
+} from "../../../../redux/medicalRecordApiCalls";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -91,7 +94,7 @@ export const PatientListImpl = () => {
       }
     };
     getDataFromDB();
-  }, [loading, requestTrigger]);
+  }, [loadingRecord, requestTrigger]);
 
   React.useEffect(() => {
     const getNormalUserData = async () => {
@@ -103,6 +106,7 @@ export const PatientListImpl = () => {
       let prescriptionFlag = false;
       let prescription = null;
       let pharmacyNote = null;
+      let medicalRecordId = null;
       otherUsers.map((item) => {
         const isoDateString = item.dateOfBirth;
         const dateOnlyString = isoDateString.substring(0, 10);
@@ -122,6 +126,7 @@ export const PatientListImpl = () => {
             if (item._id == medicalRecord.recordFor) {
               prescription = medicalRecord.prescription;
               pharmacyNote = medicalRecord.pharmacyNote;
+              medicalRecordId = medicalRecord._id;
             }
           });
         }
@@ -143,6 +148,7 @@ export const PatientListImpl = () => {
           prescription: prescription,
           pharmacyNote: pharmacyNote,
           prescriptionFlag: prescriptionFlag,
+          medicalRecordId: medicalRecordId,
         });
       });
       setRows(rowData);
@@ -211,27 +217,37 @@ export const PatientListImpl = () => {
   };
   const handleClose = () => setOpen(false);
 
-  const addNewNote = async (id, pharmacyNote) => {
-    console.log(id);
+  const addNewNote = async (medicalRecordId, pharmacyNote) => {
+    console.log(medicalRecordId);
     const { value: text } = await Swal.fire({
-      input: 'textarea',
-      inputLabel: 'Pharmacy Note',
-      inputPlaceholder: 'Type your message here......',
+      input: "textarea",
+      inputLabel: "Pharmacy Note",
+      inputPlaceholder: "Type your message here......",
       inputValue: pharmacyNote,
       // inputValue: 'Type your message here...',
       inputValidator: (value) => {
         if (!value) {
-          return 'Add New Note!'
+          return "Add New Note!";
         }
       },
       // inputAttributes: {
       //   'aria-label': 'Type your message here'
       // },
-      showCancelButton: true
-    })
-    
+      showCancelButton: true,
+    });
+
     if (text) {
-      Swal.fire(text)
+      const data = {
+        pharmacyNote: text,
+      };
+      const result = await updateMedicalRecord(medicalRecordId, data, dispatch, token);
+      if(result){
+        setRequestTrigger("Q");
+        Swal.fire("Updated!", "Your note successfully added.", "success");
+      }else {
+        Swal.fire("Update Unsuccess!", "Your note added unsuccessfully..", "danger");
+      }
+      // Swal.fire(text);
     }
   };
 
@@ -420,7 +436,12 @@ export const PatientListImpl = () => {
                   aria-label="edit"
                   size="large"
                   color="success"
-                  onClick={() => addNewNote(params.row.id, params.row.pharmacyNote)}
+                  onClick={() =>
+                    addNewNote(
+                      params.row.medicalRecordId,
+                      params.row.pharmacyNote
+                    )
+                  }
                 >
                   <EditIcon />
                 </IconButton>
@@ -440,7 +461,7 @@ export const PatientListImpl = () => {
           bgcolor: "#FFF",
         }}
       >
-        {loading ? (
+        {loading && loadingRecord ? (
           <Box sx={{ width: "100%" }}>
             <LinearProgress />
           </Box>
