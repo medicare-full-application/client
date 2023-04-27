@@ -20,6 +20,9 @@ import {
   addMonthlyIncomeSuccess,
   addTotalIncomeSuccess,
   updateOtherUserSuccess,
+  addDoctorUsersStart,
+  addDoctorUsersSuccess,
+  addDoctorUsersFailure
 } from "./userRedux";
 import { publicRequest, userRequest } from "../requestMethods";
 import Swal from "sweetalert2";
@@ -108,6 +111,23 @@ export const getUsers = async (userType, dispatch, token) => {
     return 1;
   } catch (err) {
     dispatch(getUserFailure());
+    return 0;
+  }
+};
+
+export const getDoctorUsers = async (dispatch, token) => {
+  dispatch(addDoctorUsersStart());
+  try {
+    const res = await publicRequest.get(`/user/Doctor`, {
+      headers: {
+        token: `Bearer ${token}`,
+      },
+    });
+    console.log(res);
+    dispatch(addDoctorUsersSuccess(res.data));
+    return 1;
+  } catch (err) {
+    dispatch(addDoctorUsersFailure());
     return 0;
   }
 };

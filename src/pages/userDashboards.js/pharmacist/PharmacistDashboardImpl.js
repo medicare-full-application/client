@@ -5,6 +5,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import FeaturedInfo from "../../../components/featuredInfo/FeaturedInfo";
 import Charts from "../../../components/charts/Charts";
+import './Pharmacist.css';
 
 export const PharmacistDashboardImpl = () => {
   const [userStats, setUserStats] = useState([]);
@@ -17,6 +18,7 @@ export const PharmacistDashboardImpl = () => {
   const [featuredData, setFeaturedData] = useState([]);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
+  const pharmacyRegNo = useSelector((state) => state.user.currentUser.pharmacyRegNo);
   // const otherUsers = useSelector((state) => state.user.otherUsers);
   // const adminUsers = useSelector((state) => state.user.adminUsers);
   // const events = useSelector((state) => state.event.events);
@@ -86,7 +88,7 @@ export const PharmacistDashboardImpl = () => {
   let featureData = [
     {
       index: 1,
-      title: "No of Users",
+      title: "Monthly Income",
       // number: other,
       number: 15,
       // percentage: -1.4,
@@ -95,16 +97,16 @@ export const PharmacistDashboardImpl = () => {
     },
     {
       index: 2,
-      title: "No of Events",
+      title: "Pharmacy Reg No",
       // number: event,
-      number: 86,
+      number: pharmacyRegNo,
       // percentage: +1.4,
       isDowngrade: true,
       // text: "Compared to last month",
     },
     {
       index: 3,
-      title: "No of Admin Users",
+      title: "Total Income",
       // number: admin,
       number: 89,
       // percentage: -1.4,
@@ -139,13 +141,17 @@ export const PharmacistDashboardImpl = () => {
 
       <FeaturedInfo data={featureData} />
 
-      <Charts
+      <div className="image-chart ">
+        {/* <img src="https://res.cloudinary.com/midefulness/image/upload/v1682622259/medicare/9835_fs1qfl.jpg" alt="pharmacy" />
+        <div class="center"></div> */}
+      </div>
+      {/* <Charts
         data={userStats}
         title="Users Analytics"
         grid
         dataKey1="User"
         dataKey2="Admin"
-      />
+      /> */}
     </div>
   );
 };

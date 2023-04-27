@@ -84,6 +84,13 @@ export const SlideBarListItems = () => {
         icon: <BookmarksIcon />,
         link: "/medicalRecord",
         name: "dashboard",
+      },
+      {
+        id: "leftbar-listItem-66",
+        listName: "Add Child",
+        icon: <BookmarksIcon />,
+        link: "/addChild",
+        name: "dashboard",
       }
     ];
   } else if (userType === "Pharmacist") {
@@ -95,13 +102,20 @@ export const SlideBarListItems = () => {
         link: "/pharmacistDashboard",
         name: "dashboard",
       },
+      // {
+      //   id: "leftbar-listItem-7",
+      //   listName: "Patients",
+      //   icon: <BookmarksIcon />,
+      //   link: "/patient",
+      //   name: "dashboard",
+      // },
       {
-        id: "leftbar-listItem-7",
-        listName: "Patients",
+        id: "leftbar-listItem-8",
+        listName: "Medical Records",
         icon: <BookmarksIcon />,
-        link: "/patient",
+        link: "/medicalRecord",
         name: "dashboard",
-      },
+      }
       // {
       //   id: "leftbar-listItem-8",
       //   listName: "Dashboard",

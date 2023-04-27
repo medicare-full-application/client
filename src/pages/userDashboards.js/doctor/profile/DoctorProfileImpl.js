@@ -81,7 +81,7 @@ export const DoctorProfileImpl = () => {
             variant="contained"
             href="/doctorDashboard"
             style={{ marginRight: 10 }}
-            color="warning"
+            color="third"
             // endIcon={<AddIcon />}
           >
             Back

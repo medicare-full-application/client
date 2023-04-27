@@ -23,8 +23,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { removeMedicalRecords } from "../../redux/medicalRecordRedux";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { getUsers } from "../../redux/userApiCalls";
-import { removeOtherUsers } from "../../redux/userRedux";
+import { getDoctorUsers, getUsers } from "../../redux/userApiCalls";
+import { removeDoctorUsers, removeOtherUsers } from "../../redux/userRedux";
 
 const style = {
   position: "absolute",
@@ -39,14 +39,17 @@ const style = {
   p: 4,
 };
 
-export const MedicalRecordListImpl = () => {
-  const [loading, setLoading] = useState(true);
+export const MedicalRecordListImplPharmacy = () => {
+  const [loading1, setLoading1] = useState(true);
+  const [loading2, setLoading2] = useState(true);
+  const [loading3, setLoading3] = useState(true);
   const [trigger, setTrigger] = useState("s");
   const [deleteTrigger, setDeleteTrigger] = useState("s");
   const token = useSelector((state) => state.user.token);
   const userType = useSelector((state) => state.user.userType);
   const userId = useSelector((state) => state.user.currentUser._id);
   const otherUsers = useSelector((state) => state.user.otherUsers);
+  const doctorUsers = useSelector((state) => state.user.doctorUsers);
   const medicalRecords = useSelector(
     (state) => state.medicalRecord.medicalRecords
   );
@@ -68,13 +71,13 @@ export const MedicalRecordListImpl = () => {
       if (result) {
         console.log("Get user data success");
         setTrigger(trigger + "s");
-        setLoading(false);
+        setLoading1(false);
       } else {
         console.log("Get user data unsuccess");
       }
     };
     getDataFromDB();
-  }, [loading, deleteTrigger]);
+  }, [loading1, deleteTrigger]);
 
   React.useEffect(() => {
     const getDataFromDB = async () => {
@@ -83,13 +86,28 @@ export const MedicalRecordListImpl = () => {
       if (result) {
         console.log("Get user data success");
         setTrigger(trigger + "s");
-        setLoading(false);
+        setLoading2(false);
       } else {
         console.log("Get user data unsuccess");
       }
     };
     getDataFromDB();
-  }, [loading, deleteTrigger]);
+  }, [loading2, deleteTrigger]);
+
+  React.useEffect(() => {
+    const getDoctorDataFromDB = async () => {
+      // dispatch(removeDoctorUsers());
+      const result = await getDoctorUsers(dispatch, token);
+      if (result) {
+        console.log("Get doctor user data success");
+        setTrigger(trigger + "d");
+        setLoading3(false);
+      } else {
+        console.log("Get user data unsuccess");
+      }
+    };
+    getDoctorDataFromDB();
+  }, [loading3, deleteTrigger]);
 
   React.useEffect(() => {
     const getNormalUserData = async () => {
@@ -133,14 +151,23 @@ export const MedicalRecordListImpl = () => {
             let patientLastName = null;
             let patientImage = null;
             let patientNIC = null;
+            let doctorFirstName = null;
+            let doctorLastName = null;
 
             otherUsers.map((patientData) => {
-              if(item.recordFor == patientData._id){
+              if (item.recordFor == patientData._id) {
                 patientId = patientData._id;
                 patientFirstName = patientData.firstName;
                 patientLastName = patientData.lastName;
                 patientImage = patientData.imageUrl;
                 patientNIC = patientData.NIC;
+              }
+            });
+
+            doctorUsers.map((doctorData) => {
+              if(item.recordBy == doctorData._id){
+                doctorFirstName = doctorData.firstName;
+                doctorLastName = doctorData.lastName;
               }
             });
 
@@ -157,6 +184,10 @@ export const MedicalRecordListImpl = () => {
               patientLastName: patientLastName,
               patientImage: patientImage,
               patientNIC: patientNIC,
+              recordBy: item.recordBy,
+              recordFor: item.recordFor,
+              doctorFirstName: doctorFirstName,
+              doctorLastName: doctorLastName,
 
               col6: item.event_location,
               col7: item.event_date,
@@ -252,7 +283,7 @@ export const MedicalRecordListImpl = () => {
           token
         );
         if (result) {
-          setDeleteTrigger("Q");
+          setDeleteTrigger(deleteTrigger+"Q");
           Swal.fire("Updated!", "Your note successfully added.", "success");
         } else {
           Swal.fire(
@@ -279,8 +310,28 @@ export const MedicalRecordListImpl = () => {
 
   const columns = [
     // { field: "id", headerName: "MedicalRecord Id", width: 300 },
+    { field: "patientNIC", headerName: "NIC", width: 130 },
     {
       field: "col1",
+      headerName: "Patient",
+      hideable: true,
+      width: 250,
+      renderCell: (params) => {
+        return (
+          <div className="productListItem">
+            <img
+              className="productListImg"
+              src={params.row.patientImage}
+              alt="Patient Image"
+            />
+            {params.row.patientFirstName + " " + params.row.patientLastName}
+          </div>
+        );
+      },
+    },
+    
+    {
+      field: "col3",
       headerName: "Medical Condition",
       hideable: true,
       width: 150,
@@ -289,6 +340,19 @@ export const MedicalRecordListImpl = () => {
           <div className="productListItem">
             {/* <img className="productListImg" src={params.row.col10} alt="" /> */}
             {params.row.col1}
+          </div>
+        );
+      },
+    },
+    {
+      field: "recordBy",
+      headerName: "Record Added",
+      width: 180,
+      renderCell: (params) => {
+        return (
+          <div className="productListItem">
+            {/* <img className="productListImg" src={params.row.col10} alt="" /> */}
+            {"Dr. "+params.row.doctorFirstName + " " + params.row.doctorLastName}
           </div>
         );
       },
@@ -315,7 +379,7 @@ export const MedicalRecordListImpl = () => {
       },
     },
     {
-      field: "col3",
+      field: "col6",
       headerName: userType == "Doctor" ? "View Report" : "Add Note",
       width: 130,
       renderCell: (params) => {
@@ -411,7 +475,7 @@ export const MedicalRecordListImpl = () => {
           bgcolor: "#FFF",
         }}
       >
-        {loading ? (
+        {loading1 && loading2 && loading3 ? (
           <Box sx={{ width: "100%" }}>
             <LinearProgress />
           </Box>

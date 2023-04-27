@@ -26,6 +26,8 @@ import { PharmacistDashboard } from "./pages/userDashboards.js/pharmacist/Pharma
 import { PatientList } from "./pages/userDashboards.js/patient/patientList/PatientList";
 import { DoctorDashboardImpl } from "./pages/userDashboards.js/doctor/DoctorDashboardImpl";
 import { DoctorProfile } from "./pages/userDashboards.js/doctor/profile/DoctorProfile";
+import { PharmacistProfile } from "./pages/userDashboards.js/pharmacist/profile/PharmacistProfile";
+import { AddChild } from "./pages/userDashboards.js/patient/addChild/AddChild";
 
 function App() {
   const theme = createTheme({
@@ -79,6 +81,7 @@ function App() {
           <Route path="/pharmacistDashboard" element={<PharmacistDashboard />} />
           {/* user */}
           <Route path="/patient" element={<PatientList />} />
+          <Route path="/addChild" element={<AddChild />} />
           <Route path="/createUser" element={<UserCreate />} />
           <Route path="/updateUser/:id" element={<UserUpdate />} />
           <Route path="/updateAdminUser/:id" element={<UserAdminUpdate />} />
@@ -86,7 +89,7 @@ function App() {
 
           <Route path="/doctorProfile" element={<DoctorProfile />} />
           <Route path="/patientProfile" element={<DoctorProfile />} />
-          <Route path="/pharmacistProfile" element={<DoctorProfile />} />
+          <Route path="/pharmacistProfile" element={<PharmacistProfile />} />
           <Route path="/adminProfile" element={<DoctorProfile />} />
 
           <Route path="/profileUpdate" element={<ProfileUpdate />} />

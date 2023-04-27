@@ -103,11 +103,10 @@ export const PatientListImpl = () => {
       let doctorIDData = null;
       let isRequest = "None";
 
-      let prescriptionFlag = false;
       let prescription = null;
       let pharmacyNote = null;
       let medicalRecordId = null;
-      otherUsers.map((item) => {
+      otherUsers.map(async (item) => {
         const isoDateString = item.dateOfBirth;
         const dateOnlyString = isoDateString.substring(0, 10);
 
@@ -122,16 +121,19 @@ export const PatientListImpl = () => {
         }
 
         if (userType == "Pharmacist") {
-          medicalRecords.map((medicalRecord) => {
-            if (item._id == medicalRecord.recordFor) {
-              prescription = medicalRecord.prescription;
-              pharmacyNote = medicalRecord.pharmacyNote;
-              medicalRecordId = medicalRecord._id;
+          medicalRecords.map((medicalRecordData) => {
+            if (item._id == medicalRecordData.recordFor) {
+              prescription = medicalRecordData.prescription;
+              pharmacyNote = medicalRecordData.pharmacyNote;
+              medicalRecordId = medicalRecordData._id;
+              console.log(prescription);
+              console.log(typeof prescription);
+              console.log(typeof medicalRecordData.prescription);
             }
           });
         }
 
-        rowData.push({
+        await rowData.push({
           id: item._id,
           col1: item.firstName,
           col2: item.lastName,
@@ -145,13 +147,17 @@ export const PatientListImpl = () => {
           col10: dateOnlyString,
           flag: item.flag,
           isRequest: isRequest,
-          prescription: prescription,
+          prescriptionNote: prescription,
           pharmacyNote: pharmacyNote,
-          prescriptionFlag: prescriptionFlag,
           medicalRecordId: medicalRecordId,
         });
+
+        prescription = null;
+        pharmacyNote = null;
+        medicalRecordId = null;
       });
       setRows(rowData);
+      console.log(rowData);
     };
     getNormalUserData();
   }, [trigger, requestTrigger]);
@@ -193,61 +199,81 @@ export const PatientListImpl = () => {
           setRequestTrigger(trigger + "s");
           Swal.fire("Request Sent!", "Request sent success.", "success");
         } else {
-          Swal.fire(
-            "Request Can't Sent!",
-            "Request sent unsuccess.",
-            "success"
-          );
+          Swal.fire("Request Can't Sent!", "Request sent unsuccess.", "warning");
         }
       }
     });
   };
 
   const handleOpen = (id, prescription) => {
-    const splittedArr = prescription.split(" ");
+    console.log(id);
+    console.log(prescription);
+    if (prescription != null) {
+      const splittedArr = prescription.split(" ");
 
-    let outputStr = "";
-    for (let i = 0; i < splittedArr.length; i += 2) {
-      outputStr += splittedArr[i] + " " + splittedArr[i + 1] + "\n";
+      let outputStr = "";
+      for (let i = 0; i < splittedArr.length; i += 2) {
+        outputStr += splittedArr[i] + " " + splittedArr[i + 1] + "\n";
+      }
+      console.log(outputStr);
+      setOpen(true);
+      setTitle("Prescription");
+      setContent(outputStr);
+    } else {
+      Swal.fire("No Prescription!", "There is no prescription..", "warning");
     }
-    console.log(outputStr);
-    setOpen(true);
-    setTitle("Prescription");
-    setContent(outputStr);
   };
   const handleClose = () => setOpen(false);
 
   const addNewNote = async (medicalRecordId, pharmacyNote) => {
     console.log(medicalRecordId);
-    const { value: text } = await Swal.fire({
-      input: "textarea",
-      inputLabel: "Pharmacy Note",
-      inputPlaceholder: "Type your message here......",
-      inputValue: pharmacyNote,
-      // inputValue: 'Type your message here...',
-      inputValidator: (value) => {
-        if (!value) {
-          return "Add New Note!";
-        }
-      },
-      // inputAttributes: {
-      //   'aria-label': 'Type your message here'
-      // },
-      showCancelButton: true,
-    });
 
-    if (text) {
-      const data = {
-        pharmacyNote: text,
-      };
-      const result = await updateMedicalRecord(medicalRecordId, data, dispatch, token);
-      if(result){
-        setRequestTrigger("Q");
-        Swal.fire("Updated!", "Your note successfully added.", "success");
-      }else {
-        Swal.fire("Update Unsuccess!", "Your note added unsuccessfully..", "danger");
+    if (medicalRecordId != null) {
+      const { value: text } = await Swal.fire({
+        input: "textarea",
+        inputLabel: "Pharmacy Note",
+        inputPlaceholder: "Type your message here......",
+        inputValue: pharmacyNote,
+        // inputValue: 'Type your message here...',
+        inputValidator: (value) => {
+          if (!value) {
+            return "Add New Note!";
+          }
+        },
+        // inputAttributes: {
+        //   'aria-label': 'Type your message here'
+        // },
+        showCancelButton: true,
+      });
+
+      if (text) {
+        const data = {
+          pharmacyNote: text,
+        };
+        const result = await updateMedicalRecord(
+          medicalRecordId,
+          data,
+          dispatch,
+          token
+        );
+        if (result) {
+          setRequestTrigger("Q");
+          Swal.fire("Updated!", "Your note successfully added.", "success");
+        } else {
+          Swal.fire(
+            "Update Unsuccess!",
+            "Your note added unsuccessfully..",
+            "warning"
+          );
+        }
+        // Swal.fire(text);
       }
-      // Swal.fire(text);
+    } else {
+      Swal.fire(
+        "Request Can't Sent!",
+        "This patient hasn't any medical record..",
+        "warning"
+      );
     }
   };
 
@@ -427,7 +453,7 @@ export const PatientListImpl = () => {
                   size="large"
                   color="brown"
                   onClick={() =>
-                    handleOpen(params.row.id, params.row.prescription)
+                    handleOpen(params.row.id, params.row.prescriptionNote)
                   }
                 >
                   <VisibilityIcon />
