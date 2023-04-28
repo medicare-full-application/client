@@ -1,14 +1,10 @@
 import {
-  Avatar,
-  Badge,
   Box,
-  Chip,
   Collapse,
   createTheme,
   Divider,
   Drawer,
   List,
-  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -21,12 +17,6 @@ import { SlideBarListItems } from "./SlideBarListItems";
 
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import StarBorder from "@mui/icons-material/StarBorder";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import DraftsIcon from "@mui/icons-material/Drafts";
-import SendIcon from "@mui/icons-material/Send";
-import { useDispatch, useSelector } from "react-redux";
-import { getOnePermission } from "../redux/permissionApiCalls";
 const drawerWidth = 340;
 
 const theme = createTheme({
@@ -45,9 +35,7 @@ const theme = createTheme({
 });
 function SlideBar(props) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  // const [tabValue, setTabValue] = useState(props.value);
   const [open, setOpen] = useState(true);
-  // const [items, setItems] = useState([]);
 
   const handleClick = () => {
     setOpen(!open);
@@ -58,7 +46,6 @@ function SlideBar(props) {
     setMobileOpen(!mobileOpen);
   };
 
-  // const listItems = SlideBarListItems(props.tabValue);
   const listItems = SlideBarListItems();
   console.log(listItems);
 

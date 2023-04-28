@@ -64,163 +64,172 @@ export const DoctorProfileImpl = () => {
 
   return (
     <Box
+      component="form"
+      noValidate
+      onSubmit={updateProductSubmit}
+      // className="productForm"
+      // sx={{ m: 5 }}
+    >
+      <Grid container direction="column">
+        <Grid container direction="row" justifyContent="space-between">
+          <Grid item xs={6}>
+            <Typography variant="h3">User Profile</Typography>
+          </Grid>
+          <Grid item xs={4}></Grid>
+          <Grid item xs={1}>
+            <Button
+              variant="contained"
+              href="/doctorDashboard"
+              style={{ marginRight: 10 }}
+              color="third"
+              // endIcon={<AddIcon />}
+            >
+              Back
+            </Button>
+          </Grid>
+          <Grid item xs={1}>
+            <Button variant="contained" href="/profileUpdate">
+              Update
+            </Button>
+          </Grid>
+        </Grid>
+        <Stack
+          direction="row"
+          spacing={2}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Avatar
+            alt="User Image"
+            src={user.imageUrl}
+            sx={{ width: 220, height: 220 }}
+          />
+        </Stack>
+        <Box
+          sx={{
+            my: 1,
+            mx: 4,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-evenly",
+          }}
+        >
+          <Box
             component="form"
             noValidate
-            onSubmit={updateProductSubmit}
-            // className="productForm"
-            // sx={{ m: 5 }}
+            className="productForm"
+            sx={{ m: 5 }}
           >
-    <Grid container direction="column">
-      <Grid container direction="row" justifyContent="space-between">
-        <Grid item xs={6}>
-          <Typography variant="h3">User Profile</Typography>
-        </Grid>
-        <Grid item xs={4}></Grid>
-        <Grid item xs={1}>
-          <Button
-            variant="contained"
-            href="/doctorDashboard"
-            style={{ marginRight: 10 }}
-            color="third"
-            // endIcon={<AddIcon />}
-          >
-            Back
-          </Button>
-        </Grid>
-        <Grid item xs={1}>
-          <Button variant="contained" href="/profileUpdate">
-            Update
-          </Button>
-        </Grid>
-      </Grid>
-      <Stack
-        direction="row"
-        spacing={2}
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Avatar
-          alt="User Image"
-          src={user.imageUrl}
-          sx={{ width: 220, height: 220 }}
-        />
-      </Stack>
-      <Box
-        sx={{
-          my: 1,
-          mx: 4,
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-evenly",
-        }}
-      >
-        <Box component="form" noValidate className="productForm" sx={{ m: 5 }}>
-          {/* <div className="productFormLeft"> */}
-          <Grid container spacing={4}>
-            {/* <Grid item md={10}> */}
+            {/* <div className="productFormLeft"> */}
             <Grid container spacing={4}>
-              <Grid item md={6}>
-                <TextField
-                  defaultValue={user.firstName ? user.firstName : "No Value"}
-                  variant="standard"
-                  // disabled
-                  margin="normal"
-                  fullWidth
-                  label="First Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item md={6}>
-                <TextField
-                  defaultValue={user.lastName ? user.lastName : "No Value"}
-                  variant="standard"
-                  margin="normal"
-                  fullWidth
-                  label="Last Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item md={6}>
-                <TextField
-                  defaultValue={user.NIC ? user.NIC : "No Value"}
-                  variant="standard"
-                  margin="normal"
-                  fullWidth
-                  label="NIC"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item md={6}>
-                <TextField
-                  defaultValue={user.address ? user.address : "No Value"}
-                  variant="standard"
-                  margin="normal"
-                  fullWidth
-                  label="Address"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item md={6}>
-                <TextField
-                  defaultValue={user.contact ? user.contact : "No Value"}
-                  variant="standard"
-                  margin="normal"
-                  fullWidth
-                  label="Contact"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item md={6}>
-                <TextField
-                  defaultValue={user.email ? user.email : "No Value"}
-                  variant="standard"
-                  margin="normal"
-                  fullWidth
-                  label="Email"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item md={6}>
-                <TextField
-                  defaultValue={
-                    user.dateOfBirth ? user.dateOfBirth.substring(0, 10) : "No Value"
-                  }
-                  variant="standard"
-                  margin="normal"
-                  fullWidth
-                  label="Birthday"
-                  autoFocus
-                />
-              </Grid>
+              {/* <Grid item md={10}> */}
+              <Grid container spacing={4}>
+                <Grid item md={6}>
+                  <TextField
+                    defaultValue={user.firstName ? user.firstName : "No Value"}
+                    variant="standard"
+                    // disabled
+                    margin="normal"
+                    fullWidth
+                    label="First Name"
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextField
+                    defaultValue={user.lastName ? user.lastName : "No Value"}
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    label="Last Name"
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextField
+                    defaultValue={user.NIC ? user.NIC : "No Value"}
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    label="NIC"
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextField
+                    defaultValue={user.address ? user.address : "No Value"}
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    label="Address"
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextField
+                    defaultValue={user.contact ? user.contact : "No Value"}
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    label="Contact"
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextField
+                    defaultValue={user.email ? user.email : "No Value"}
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    label="Email"
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextField
+                    defaultValue={
+                      user.dateOfBirth
+                        ? user.dateOfBirth.substring(0, 10)
+                        : "No Value"
+                    }
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    label="Birthday"
+                    autoFocus
+                  />
+                </Grid>
 
-              {userType === "Doctor" && (
-                <>
-                  <Grid item md={6}>
-                    <TextField
-                      defaultValue={
-                        user.description ? user.description : "No Value"
-                      }
-                      variant="standard"
-                      margin="normal"
-                      fullWidth
-                      label="Description"
-                      autoFocus
-                    />
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextField
-                      defaultValue={
-                        user.experienceYears ? user.experienceYears : "No Value"
-                      }
-                      variant="standard"
-                      margin="normal"
-                      fullWidth
-                      label="Experience Years"
-                      autoFocus
-                    />
-                  </Grid>
-                  {/* <Grid item md={6}>
+                {userType === "Doctor" && (
+                  <>
+                    <Grid item md={6}>
+                      <TextField
+                        defaultValue={
+                          user.description ? user.description : "No Value"
+                        }
+                        variant="standard"
+                        margin="normal"
+                        fullWidth
+                        label="Description"
+                        autoFocus
+                      />
+                    </Grid>
+                    <Grid item md={6}>
+                      <TextField
+                        defaultValue={
+                          user.experienceYears
+                            ? user.experienceYears
+                            : "No Value"
+                        }
+                        variant="standard"
+                        margin="normal"
+                        fullWidth
+                        label="Experience Years"
+                        autoFocus
+                      />
+                    </Grid>
+                    {/* <Grid item md={6}>
                     <TextField
                       defaultValue={
                         user.noOfOngoingPatients
@@ -234,7 +243,7 @@ export const DoctorProfileImpl = () => {
                       autoFocus
                     />
                   </Grid> */}
-                  {/* <Grid item md={6}>
+                    {/* <Grid item md={6}>
                     <TextField
                       defaultValue={
                         user.totalPatients ? user.totalPatients : "No Value"
@@ -246,10 +255,10 @@ export const DoctorProfileImpl = () => {
                       autoFocus
                     />
                   </Grid> */}
-                </>
-              )}
+                  </>
+                )}
 
-              {/* <Grid item md={6}>
+                {/* <Grid item md={6}>
                 <TextField
                   defaultValue={user.hourRate ? user.hourRate : "No Value"}
                   variant="standard"
@@ -259,23 +268,23 @@ export const DoctorProfileImpl = () => {
                   autoFocus
                 />
               </Grid> */}
-              <Grid item md={6}>
-                <TextField
-                  defaultValue={
-                    user.medicalRegNo ? user.medicalRegNo : "No Value"
-                  }
-                  variant="standard"
-                  margin="normal"
-                  fullWidth
-                  label="Medical Reg No"
-                  autoFocus
-                />
+                <Grid item md={6}>
+                  <TextField
+                    defaultValue={
+                      user.medicalRegNo ? user.medicalRegNo : "No Value"
+                    }
+                    variant="standard"
+                    margin="normal"
+                    fullWidth
+                    label="Medical Reg No"
+                    autoFocus
+                  />
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          </Box>
         </Box>
-      </Box>
-    </Grid>
+      </Grid>
     </Box>
   );
 };

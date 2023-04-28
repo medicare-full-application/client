@@ -43,19 +43,14 @@ const style = {
   p: 4,
 };
 
-export const PatientListImpl = () => {
+export const DoctorListImpl = () => {
   const [loading, setLoading] = useState(true);
   const [loadingRecord, setLoadingRecord] = useState(true);
   const [trigger, setTrigger] = useState("s");
   const [requestTrigger, setRequestTrigger] = useState("s");
   const token = useSelector((state) => state.user.token);
   const userId = useSelector((state) => state.user.currentUser._id);
-  const childOrNot = useSelector((state) => state.user.currentUser.childOrNot);
   const userType = useSelector((state) => state.user.userType);
-  // const otherUsers = useSelector((state) =>
-  //   state.user.otherUsers.filter((x) => x.childOrNot == false)
-  // );
-  // console.log(otherUsers);
   const otherUsers = useSelector((state) => state.user.otherUsers);
   const medicalRecords = useSelector(
     (state) => state.medicalRecord.medicalRecords
@@ -112,56 +107,54 @@ export const PatientListImpl = () => {
       let pharmacyNote = null;
       let medicalRecordId = null;
       otherUsers.map(async (item) => {
-        if (item.childOrNot == false) {
-          const isoDateString = item.dateOfBirth;
-          const dateOnlyString = isoDateString.substring(0, 10);
+        const isoDateString = item.dateOfBirth;
+        const dateOnlyString = isoDateString.substring(0, 10);
 
-          if (userType == "Doctor") {
-            item.requests.map((request) => {
-              if (request.doctorId === userId) {
-                flag = true;
-                doctorIDData = request.doctorId;
-                isRequest = request.isRequest;
-              }
-            });
-          }
-
-          if (userType == "Pharmacist") {
-            medicalRecords.map((medicalRecordData) => {
-              if (item._id == medicalRecordData.recordFor) {
-                prescription = medicalRecordData.prescription;
-                pharmacyNote = medicalRecordData.pharmacyNote;
-                medicalRecordId = medicalRecordData._id;
-                console.log(prescription);
-                console.log(typeof prescription);
-                console.log(typeof medicalRecordData.prescription);
-              }
-            });
-          }
-
-          await rowData.push({
-            id: item._id,
-            col1: item.firstName,
-            col2: item.lastName,
-            col3: item.NIC,
-            col4: item.imageUrl,
-            col5: item.haveChildren,
-            col6: item.address,
-            col7: item.contactNo,
-            col8: item.email,
-            col9: item.userStatus,
-            col10: dateOnlyString,
-            flag: item.flag,
-            isRequest: isRequest,
-            prescriptionNote: prescription,
-            pharmacyNote: pharmacyNote,
-            medicalRecordId: medicalRecordId,
+        if (userType == "Doctor") {
+          item.requests.map((request) => {
+            if (request.doctorId === userId) {
+              flag = true;
+              doctorIDData = request.doctorId;
+              isRequest = request.isRequest;
+            }
           });
-
-          prescription = null;
-          pharmacyNote = null;
-          medicalRecordId = null;
         }
+
+        if (userType == "Pharmacist") {
+          medicalRecords.map((medicalRecordData) => {
+            if (item._id == medicalRecordData.recordFor) {
+              prescription = medicalRecordData.prescription;
+              pharmacyNote = medicalRecordData.pharmacyNote;
+              medicalRecordId = medicalRecordData._id;
+              console.log(prescription);
+              console.log(typeof prescription);
+              console.log(typeof medicalRecordData.prescription);
+            }
+          });
+        }
+
+        await rowData.push({
+          id: item._id,
+          col1: item.firstName,
+          col2: item.lastName,
+          col3: item.NIC,
+          col4: item.imageUrl,
+          col5: item.haveChildren,
+          col6: item.address,
+          col7: item.contactNo,
+          col8: item.email,
+          col9: item.userStatus,
+          col10: dateOnlyString,
+          flag: item.flag,
+          isRequest: isRequest,
+          prescriptionNote: prescription,
+          pharmacyNote: pharmacyNote,
+          medicalRecordId: medicalRecordId,
+        });
+
+        prescription = null;
+        pharmacyNote = null;
+        medicalRecordId = null;
       });
       setRows(rowData);
       console.log(rowData);
@@ -206,11 +199,7 @@ export const PatientListImpl = () => {
           setRequestTrigger(trigger + "s");
           Swal.fire("Request Sent!", "Request sent success.", "success");
         } else {
-          Swal.fire(
-            "Request Can't Sent!",
-            "Request sent unsuccess.",
-            "warning"
-          );
+          Swal.fire("Request Can't Sent!", "Request sent unsuccess.", "warning");
         }
       }
     });
@@ -310,9 +299,24 @@ export const PatientListImpl = () => {
     navigate(`/createMedicalRecord/${id}`);
   };
 
-  const changeItem = (parentId) => {
-    navigate(`/patient/child/${parentId}`);
-  }
+  const changeItem = (id) => {
+    console.log(id);
+    //API call
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#378cbb",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Change it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        alert(id);
+        Swal.fire("Change!", "User activation changed.", "success");
+      }
+    });
+  };
 
   const columns = [
     // { field: "id", headerName: "User Id", width: 300 },
@@ -348,7 +352,7 @@ export const PatientListImpl = () => {
                   aria-label="edit"
                   size="large"
                   color="success"
-                  onClick={() => changeItem(params.row.id)}
+                  // onClick={() => changeItem(params.row.id)}
                 >
                   <CheckIcon />
                 </IconButton>
@@ -474,7 +478,6 @@ export const PatientListImpl = () => {
       },
     },
   ];
-
   return (
     <>
       <Box
@@ -497,7 +500,7 @@ export const PatientListImpl = () => {
               alignItems="center"
             >
               <div>
-                <h2>Patients</h2>
+                <h2>Doctors</h2>
               </div>
               {/* <div>
               <Button
@@ -514,10 +517,7 @@ export const PatientListImpl = () => {
             </Grid>
 
             <div style={{ marginTop: "20px" }}>
-              <TableComponent
-                rows={rows}
-                columns={columns}
-              />
+              <TableComponent rows={rows} columns={columns} />
             </div>
           </div>
         )}

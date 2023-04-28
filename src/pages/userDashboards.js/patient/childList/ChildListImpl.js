@@ -29,6 +29,7 @@ import {
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const style = {
   position: "absolute",
@@ -43,7 +44,7 @@ const style = {
   p: 4,
 };
 
-export const PatientListImpl = () => {
+export const ChildListImpl = () => {
   const [loading, setLoading] = useState(true);
   const [loadingRecord, setLoadingRecord] = useState(true);
   const [trigger, setTrigger] = useState("s");
@@ -52,10 +53,6 @@ export const PatientListImpl = () => {
   const userId = useSelector((state) => state.user.currentUser._id);
   const childOrNot = useSelector((state) => state.user.currentUser.childOrNot);
   const userType = useSelector((state) => state.user.userType);
-  // const otherUsers = useSelector((state) =>
-  //   state.user.otherUsers.filter((x) => x.childOrNot == false)
-  // );
-  // console.log(otherUsers);
   const otherUsers = useSelector((state) => state.user.otherUsers);
   const medicalRecords = useSelector(
     (state) => state.medicalRecord.medicalRecords
@@ -104,20 +101,23 @@ export const PatientListImpl = () => {
   React.useEffect(() => {
     const getNormalUserData = async () => {
       let rowData = [];
-      let flag = false;
-      let doctorIDData = null;
-      let isRequest = "None";
 
-      let prescription = null;
-      let pharmacyNote = null;
-      let medicalRecordId = null;
       otherUsers.map(async (item) => {
-        if (item.childOrNot == false) {
+        let flag = false;
+        let doctorIDData = null;
+        let isRequest = "None";
+
+        let prescription = null;
+        let pharmacyNote = null;
+        let medicalRecordId = null;
+        if (item.childOrNot == true) {
           const isoDateString = item.dateOfBirth;
           const dateOnlyString = isoDateString.substring(0, 10);
 
           if (userType == "Doctor") {
             item.requests.map((request) => {
+              console.log(item);
+              console.log(request);
               if (request.doctorId === userId) {
                 flag = true;
                 doctorIDData = request.doctorId;
@@ -158,9 +158,9 @@ export const PatientListImpl = () => {
             medicalRecordId: medicalRecordId,
           });
 
-          prescription = null;
-          pharmacyNote = null;
-          medicalRecordId = null;
+          //   prescription = null;
+          //   pharmacyNote = null;
+          //   medicalRecordId = null;
         }
       });
       setRows(rowData);
@@ -310,13 +310,7 @@ export const PatientListImpl = () => {
     navigate(`/createMedicalRecord/${id}`);
   };
 
-  const changeItem = (parentId) => {
-    navigate(`/patient/child/${parentId}`);
-  }
-
   const columns = [
-    // { field: "id", headerName: "User Id", width: 300 },
-    { field: "col3", headerName: "NIC", width: 140 },
     {
       field: "col1",
       headerName: "Full Name",
@@ -334,40 +328,6 @@ export const PatientListImpl = () => {
     { field: "col8", headerName: "Email", width: 220 },
     { field: "col6", headerName: "Address", width: 220 },
     { field: "col7", headerName: "Contact", width: 120 },
-    {
-      field: "col5",
-      headerName: "Have Children",
-      width: 120,
-      renderCell: (params) => {
-        return (
-          <>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              {params.row.col5}
-              {params.row.col5 ? (
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="success"
-                  onClick={() => changeItem(params.row.id)}
-                >
-                  <CheckIcon />
-                </IconButton>
-              ) : (
-                <IconButton
-                  aria-label="delete"
-                  size="large"
-                  color="error"
-                  // onClick={() => changeItem(params.row.id)}
-                >
-                  <ClearIcon />
-                </IconButton>
-              )}
-            </Stack>
-          </>
-        );
-      },
-    },
-
     {
       field: "col10",
       headerName: "Birthday",
@@ -499,25 +459,22 @@ export const PatientListImpl = () => {
               <div>
                 <h2>Patients</h2>
               </div>
-              {/* <div>
-              <Button
-                variant="contained"
-                href="/createUser"
-                // color="secondary"
-                endIcon={<AddIcon />}
-              >
-                Create
-              </Button>
-            </div> */}
+              <div>
+                <Button
+                  variant="contained"
+                  color="third"
+                  href="/patient"
+                  startIcon={<ArrowBackIcon />}
+                >
+                  Back
+                </Button>
+              </div>
 
               {/* <Button variant="contained">Contained1</Button> */}
             </Grid>
 
             <div style={{ marginTop: "20px" }}>
-              <TableComponent
-                rows={rows}
-                columns={columns}
-              />
+              <TableComponent rows={rows} columns={columns} />
             </div>
           </div>
         )}

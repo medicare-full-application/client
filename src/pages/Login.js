@@ -16,7 +16,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../redux/userApiCalls";
 import Swal from "sweetalert2";
-import { addPermission } from "../redux/permissionApiCalls";
 
 function Copyright(props) {
   return (

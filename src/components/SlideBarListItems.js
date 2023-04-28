@@ -8,6 +8,7 @@ import { useState } from "react";
 // import { useSelector } from "react-redux";
 export const SlideBarListItems = () => {
   const userType = useSelector((state) => state.user.userType);
+  const currentUser = useSelector((state) => state.user.currentUser);
 
   let listItems = [];
 
@@ -63,36 +64,62 @@ export const SlideBarListItems = () => {
       // },
     ];
   } else if (userType === "Patient") {
-    listItems = [
-      {
-        id: "leftbar-listItem-4",
-        listName: "Dashboard",
-        icon: <BookmarksIcon />,
-        link: "/patientDashboard",
-        name: "dashboard",
-      },
-      {
-        id: "leftbar-listItem-5",
-        listName: "Doctors",
-        icon: <BookmarksIcon />,
-        link: "/doctor",
-        name: "dashboard",
-      },
-      {
-        id: "leftbar-listItem-6",
-        listName: "My Medical Records",
-        icon: <BookmarksIcon />,
-        link: "/medicalRecord",
-        name: "dashboard",
-      },
-      {
-        id: "leftbar-listItem-66",
-        listName: "Add Child",
-        icon: <BookmarksIcon />,
-        link: "/addChild",
-        name: "dashboard",
-      }
-    ];
+    if (!currentUser.childOrNot) {
+      listItems = [
+        {
+          id: "leftbar-listItem-4",
+          listName: "Dashboard",
+          icon: <BookmarksIcon />,
+          link: "/patientDashboard",
+          name: "dashboard",
+        },
+        {
+          id: "leftbar-listItem-5",
+          listName: "Doctors",
+          icon: <BookmarksIcon />,
+          link: "/doctor",
+          name: "dashboard",
+        },
+        {
+          id: "leftbar-listItem-6",
+          listName: "My Medical Records",
+          icon: <BookmarksIcon />,
+          link: "/medicalRecord",
+          name: "dashboard",
+        },
+        {
+          id: "leftbar-listItem-66",
+          listName: "Add Child",
+          icon: <BookmarksIcon />,
+          link: "/addChild",
+          name: "dashboard",
+        },
+      ];
+    } else {
+      listItems = [
+        {
+          id: "leftbar-listItem-4",
+          listName: "Dashboard",
+          icon: <BookmarksIcon />,
+          link: "/patientDashboard",
+          name: "dashboard",
+        },
+        {
+          id: "leftbar-listItem-5",
+          listName: "Doctors",
+          icon: <BookmarksIcon />,
+          link: "/doctor",
+          name: "dashboard",
+        },
+        {
+          id: "leftbar-listItem-6",
+          listName: "My Medical Records",
+          icon: <BookmarksIcon />,
+          link: "/medicalRecord",
+          name: "dashboard",
+        },
+      ];
+    }
   } else if (userType === "Pharmacist") {
     listItems = [
       {
@@ -115,7 +142,7 @@ export const SlideBarListItems = () => {
         icon: <BookmarksIcon />,
         link: "/medicalRecord",
         name: "dashboard",
-      }
+      },
       // {
       //   id: "leftbar-listItem-8",
       //   listName: "Dashboard",
@@ -142,11 +169,11 @@ export const SlideBarListItems = () => {
       },
       {
         id: "leftbar-listItem-10",
-        listName: "Add News",
+        listName: "All News",
         icon: <BookmarksIcon />,
-        link: "/dashboard",
+        link: "/news",
         name: "dashboard",
-      }
+      },
     ];
   }
 

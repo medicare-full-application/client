@@ -83,6 +83,22 @@ export const userRegister = async (userType, User) => {
   }
 };
 
+export const userChildRegister = async (parentId, User) => {
+  // dispatch(addUserStart());
+  try {
+    const res = await publicRequest.post(`/auth/register/child/${parentId}`, User);
+    console.log(res);
+    return 1;
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "User registration Failed!",
+    });
+    return 0;
+  }
+};
+
 export const login = async (dispatch, data) => {
   // const userData = JSON.stringify(data);
   console.log(data);

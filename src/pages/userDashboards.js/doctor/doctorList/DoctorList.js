@@ -1,18 +1,18 @@
 import React from 'react'
-import MainHeader from '../../components/MainHeader'
 import { Grid } from "@mui/material";
-// import { AdvertisementListImpl } from './AdvertisementListImpl';
+import MainHeader from '../../../../components/MainHeader';
+import { DoctorListImpl } from './DoctorListImpl';
 
-export const AdvertisementList = () => {
+export const DoctorList = () => {
   return (
     <React.Fragment>
       <MainHeader value={0} />
       <Grid container spacing={2} sx={{ pt: "100px", px: 5 }}>
         <Grid item xs={12}>
-          <div>Yohan</div>
-          {/* <AdvertisementListImpl /> */}
+          <DoctorListImpl />
         </Grid>
       </Grid>
     </React.Fragment>
   )
 }
+

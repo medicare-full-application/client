@@ -28,10 +28,11 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import FormControl from "@mui/material/FormControl";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { userRegister } from "../../../../redux/userApiCalls";
+import { getUsers, userChildRegister, userRegister } from "../../../../redux/userApiCalls";
 import Swal from "sweetalert2";
 import SendIcon from "@mui/icons-material/Send";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { removeOtherUsers } from "../../../../redux/userRedux";
 
 export default function AddChildImpl() {
   const [value, setValue] = React.useState(0);
@@ -50,15 +51,30 @@ export default function AddChildImpl() {
   const [medicalRegNoError, setMedicalRegNoError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
 
-  const [pharmacyRegNoError, setPharmacyRegNoError] = React.useState(false);
-  const [pharmacyNameError, setPharmacyNameError] = React.useState(false);
+  const [requestTrigger, setRequestTrigger] = React.useState("s");
 
   const childrenIds = useSelector(
     (state) => state.user.currentUser.childrenIds
   );
 
+  const userId = useSelector((state) => state.user.currentUser._id);
+  const token = useSelector((state) => state.user.token);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const getDataFromDB = async () => {
+      dispatch(removeOtherUsers());
+      const result = await getUsers("Patient", dispatch, token);
+      if (result) {
+        console.log("Get user data success");
+      } else {
+        console.log("Get user data unsuccess");
+      }
+    };
+    getDataFromDB();
+  }, [requestTrigger]);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -120,19 +136,20 @@ export default function AddChildImpl() {
         confirmButtonText: "Yes, Register!",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          const result = await userRegister("Patient", userData);
+          const result = await userChildRegister(userId, userData);
           if (result) {
-            console.log("User registration completed!");
+            console.log("Patient child registration completed!");
             Swal.fire(
-              "Patient Registration!",
-              "User registration completed!",
+              "Patient Child Registration!",
+              "Patient child registration completed!",
               "success"
             );
-            navigate("/");
+            setRequestTrigger(requestTrigger+"s");
+            navigate("/addChild");
           } else {
             Swal.fire(
-              "Patient Registration!",
-              "User registration uncompleted!",
+              "Patient child Registration!",
+              "Patient child registration uncompleted!",
               "warning"
             );
             console.log("Get user data unsuccess");
@@ -156,14 +173,14 @@ export default function AddChildImpl() {
         <Grid item xs={6}>
           <Typography variant="h3">Add Children</Typography>
         </Grid>
-        <Button
+        {/* <Button
           variant="contained"
           color="third"
           href="/patient"
           startIcon={<ArrowBackIcon />}
         >
           Back
-        </Button>
+        </Button> */}
       </Grid>
       <Box
         sx={{

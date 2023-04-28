@@ -3,7 +3,6 @@ import { Grid } from "@mui/material";
 import "./common.css";
 import MainHeader from "../components/MainHeader";
 import { DashboardImpl } from "./DashboardImpl";
-import { addPermission, getOnePermission } from "../redux/permissionApiCalls";
 import { useDispatch, useSelector } from "react-redux";
 
 export const Dashboard = () => {

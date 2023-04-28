@@ -12,24 +12,31 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import { getUsers, updateNormalUser } from "../../redux/userApiCalls";
-import { updateEvent } from "../../redux/eventApiCalls";
-import { getAdvertisement, updateAdvertisement } from "../../redux/advertisementApiCalls";
+import { getMedicalRecord, updateMedicalRecord } from "../../redux/medicalRecordApiCalls";
 
-export const AdvertisementUpdateImpl = () => {
+export const MedicalRecordUpdateImpl = () => {
   const location = useLocation();
   // const productId = location.pathname.split("/")[3];
-  const advertisementId = window.location.pathname.split("/")[2];
+  const medicalRecordId = window.location.pathname.split("/")[2];
   // console.log(productId);
   const [pStats, setPStats] = useState([]);
   const [show, setShow] = useState(false);
   const [trigger, setTrigger] = useState("success");
   const [formSaveData, setFormSaveData] = useState([]);
 
+  const [event_nameError, setevent_nameError] = useState(false);
   const [descriptionError, setdescriptionError] = useState(false);
-  const [urlError, seturlError] = useState(false);
+  const [priceError, setpriceError] = useState(false);
+  const [event_dateError, setevent_dateError] = useState(false);
+  const [event_timeError, setevent_timeError] = useState(false);
+  const [event_locationError, setevent_locationError] = useState(false);
 
+  const [event_nameMessageError, setevent_nameMessageError] = useState("");
   const [descriptionMessageError, setdescriptionMessageError] = useState("");
-  const [urlMessageError, seturlMessageError] = useState("");
+  const [priceMessageError, setpriceMessageError] = useState("");
+  const [event_dateMessageError, setevent_dateMessageError] = useState("");
+  const [event_timeMessageError, setevent_timeMessageError] = useState("");
+  const [event_locationMessageError, setevent_locationMessageError] = useState("");
 
   const dispatch = useDispatch();
 
@@ -37,15 +44,13 @@ export const AdvertisementUpdateImpl = () => {
   const userId = useSelector((state) => state.user.currentUser.user_id);
 
   const currentUser = useSelector((state) =>
-    state.advertisement.advertisements.find(
-      (user) => user.advertisement_id == advertisementId
-    )
+    state.medicalRecord.medicalRecords.find((user) => user._id == medicalRecordId)
   );
   console.log(currentUser);
 
   React.useEffect(() => {
     const getDataFromDB = async () => {
-      const result = await getAdvertisement(dispatch, token);
+      const result = await getMedicalRecord(dispatch, token);
       if (result) {
         console.log("Get user data success");
       } else {
@@ -90,17 +95,35 @@ export const AdvertisementUpdateImpl = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const formNewData = {
-      advertisement_id: advertisementId,
-      image_url: currentUser.image_url,
+      event_id: medicalRecordId,
+      user_id: userId,
+      event_name: formData.get("event_name")
+        ? formData.get("event_name")
+        : currentUser.event_name,
       description: formData.get("description")
         ? formData.get("description")
         : currentUser.description,
-      url: formData.get("url") ? formData.get("url") : currentUser.url,
+      price: formData.get("price") ? formData.get("price") : currentUser.price,
+      event_location: formData.get("event_location")
+        ? formData.get("event_location")
+        : currentUser.event_location,
+      event_date: formData.get("event_date")
+        ? formData.get("event_date")
+        : currentUser.event_date,
+      event_time: formData.get("event_time")
+        ? formData.get("event_time")
+        : currentUser.event_location,
+
+      // img: product.img,
     };
 
     console.log(formNewData);
 
-    const result = await updateAdvertisement(formNewData, dispatch, token);
+    const result = await updateMedicalRecord(
+      formNewData,
+      dispatch,
+      token
+    );
 
     setTrigger(trigger + "su");
     // console.log(result);
@@ -122,11 +145,11 @@ export const AdvertisementUpdateImpl = () => {
   return (
     <div>
       <div className="productTitleContainer">
-        <h1 className="addTitle">Advertisement Detail Edit</h1>
+        <h1 className="addTitle">Medical Record Detail Edit</h1>
         <div>
           <Button
             variant="contained"
-            href="/advertisement"
+            href="/medicalRecord"
             style={{ marginRight: 10 }}
             color="warning"
             // endIcon={<AddIcon />}
@@ -137,7 +160,7 @@ export const AdvertisementUpdateImpl = () => {
           {/* <button className="color-contained-button">Create</button> */}
           <Button
             variant="contained"
-            href="/createAdvertisement"
+            href="/createMedicalRecord"
             // color="secondary"
             // endIcon={<AddIcon />}
           >
@@ -148,37 +171,35 @@ export const AdvertisementUpdateImpl = () => {
       </div>
       <div className="productTop">
         <div className="productTopLeft">
-          {/* <Charts data={pStats} dataKey1="Sales" title="Advertisement Registration" /> */}
+          {/* <Charts data={pStats} dataKey1="Sales" title="Event Registration" /> */}
         </div>
         <div className="productTopRight">
           <div className="productInfoTop">
-            <img src={currentUser.image_url} alt="" className="productInfoImg" />
-            <span className="productName">Advertisement Details</span>
+            <img src={currentUser.user_img} alt="" className="productInfoImg" />
+            <span className="productName">Medical Record Details</span>
           </div>
           <div className="productInfoBottom">
             <div className="productInfoItem">
-              <span className="productInfoKey">Advertisement ID:</span>
-              <span className="productInfoValue">{advertisementId}</span>
+              <span className="productInfoKey">Event ID:</span>
+              <span className="productInfoValue">{medicalRecordId}</span>
             </div>
             <div className="productInfoItem">
-              <span className="productInfoKey">Advertisement Description:</span>
-              <span className="productInfoValue">{currentUser.description}</span>
+              <span className="productInfoKey">Event Name:</span>
+              <span className="productInfoValue">{currentUser.event_name}</span>
             </div>
-            {/* <div className="productInfoItem">
+            <div className="productInfoItem">
               <span className="productInfoKey">Event Date:</span>
               <span className="productInfoValue">{currentUser.event_date}</span>
             </div>
             <div className="productInfoItem">
               <span className="productInfoKey">Location:</span>
-              <span className="productInfoValue">
-                {currentUser.event_location}
-              </span>
-            </div> */}
+              <span className="productInfoValue">{currentUser.event_location}</span>
+            </div>
           </div>
         </div>
       </div>
       <div className="productBottom">
-        <h2 className="h3Title">Update Advertisement</h2>
+        <h2 className="h3Title">Update Event</h2>
         <Box
           sx={{
             my: 1,
@@ -202,6 +223,26 @@ export const AdvertisementUpdateImpl = () => {
             <Grid container spacing={4}>
               <Grid item md={10}>
                 <Grid container spacing={2}>
+                  <Grid item md={4}>
+                    <TextField
+                      error={event_nameError}
+                      defaultValue={currentUser.event_name}
+                      variant="standard"
+                      margin="normal"
+                      // required
+                      fullWidth
+                      id="event_name"
+                      label="Event Name"
+                      name="event_name"
+                      autoComplete="event_name"
+                      autoFocus
+                      helperText={event_nameMessageError}
+                      onChange={() => {
+                        setevent_nameError(false);
+                        setevent_nameMessageError("");
+                      }}
+                    />
+                  </Grid>
                   <Grid item md={4}>
                     <TextField
                       error={descriptionError}
@@ -278,22 +319,84 @@ export const AdvertisementUpdateImpl = () => {
                   </Grid> */}
                   <Grid item md={4}>
                     <TextField
-                      error={urlError}
-                      defaultValue={currentUser.url}
+                      error={priceError}
+                      defaultValue={currentUser.price}
                       variant="standard"
                       margin="normal"
                       // required
-                      type="text"
+                      type="number"
                       fullWidth
-                      id="url"
-                      label="Url"
-                      name="url"
-                      autoComplete="url"
+                      id="price"
+                      label="Price"
+                      name="price"
+                      autoComplete="price"
                       autoFocus
-                      helperText={urlMessageError}
+                      helperText={priceMessageError}
                       onChange={() => {
-                        seturlError(false);
-                        seturlMessageError("");
+                        setpriceError(false);
+                        setpriceMessageError("");
+                      }}
+                    />
+                  </Grid>
+                  <Grid item md={4}>
+                    <TextField
+                      error={event_dateError}
+                      defaultValue={currentUser.event_date}
+                      variant="standard"
+                      margin="normal"
+                      // required
+                      type="date"
+                      fullWidth
+                      id="event_date"
+                      label="event_date"
+                      name="Event Date"
+                      autoComplete="event_date"
+                      autoFocus
+                      helperText={event_dateMessageError}
+                      onChange={() => {
+                        setevent_dateError(false);
+                        setevent_dateMessageError("");
+                      }}
+                    />
+                  </Grid>
+                  <Grid item md={4}>
+                    <TextField
+                      error={event_timeError}
+                      defaultValue={currentUser.event_time}
+                      variant="standard"
+                      margin="normal"
+                      // required
+                      type="time"
+                      fullWidth
+                      id="event_time"
+                      label="event_time"
+                      name="Event Time"
+                      autoComplete="event_time"
+                      autoFocus
+                      helperText={event_timeMessageError}
+                      onChange={() => {
+                        setevent_timeError(false);
+                        setevent_timeMessageError("");
+                      }}
+                    />
+                  </Grid>
+                  <Grid item md={4}>
+                    <TextField
+                      error={event_locationError}
+                      defaultValue={currentUser.event_location}
+                      variant="standard"
+                      margin="normal"
+                      // required
+                      fullWidth
+                      id="event_location"
+                      label="event_location"
+                      name="Event Location"
+                      autoComplete="event_location"
+                      autoFocus
+                      helperText={event_locationMessageError}
+                      onChange={() => {
+                        setevent_locationError(false);
+                        setevent_locationMessageError("");
                       }}
                     />
                   </Grid>
