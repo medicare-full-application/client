@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const newsSlice = createSlice({
   name: "news",
   initialState: {
-    news:null,
+    newsData:null,
     isFetching: false,
     error: false,
   },
@@ -15,14 +15,14 @@ const newsSlice = createSlice({
     },
     getNewsSuccess: (state, action) => {
       state.isFetching = false;
-      state.news = action.payload;
+      state.newsData = action.payload;
     },
     getNewsFailure: (state) => {
       state.isFetching = false;
       state.error = true;
     },
     removeNews: (state) => {
-      state.news = null;
+      state.newsData = null;
     },
     //DELETE
     deleteNewsStart: (state) => {
@@ -31,8 +31,8 @@ const newsSlice = createSlice({
     },
     deleteNewsSuccess: (state, action) => {
       state.isFetching = false;
-      state.news.splice(
-        state.news.findIndex((item) => item.News_id === action.payload),
+      state.newsData.splice(
+        state.newsData.findIndex((item) => item._id === action.payload),
         1
       );
     },
@@ -48,7 +48,7 @@ const newsSlice = createSlice({
     updateNewsSuccess: (state, action) => {
       state.isFetching = false;
       state.otherNews[
-        state.news.findIndex((item) => item.News_id === action.payload.id)
+        state.newsData.findIndex((item) => item._id === action.payload.id)
       ] = action.payload.News;
     },
     updateNewsFailure: (state) => {
@@ -62,7 +62,7 @@ const newsSlice = createSlice({
     },
     addNewsSuccess: (state, action) => {
       state.isFetching = false;
-      state.news.push(action.payload);
+      state.newsData.push(action.payload);
     },
     addNewsFailure: (state) => {
       state.isFetching = false;

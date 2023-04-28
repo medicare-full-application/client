@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
 import {
   doctorRequestToPatient,
+  getDoctorUsers,
   getUsers,
   patientRequestToDoctor,
 } from "../../../../redux/userApiCalls";
@@ -51,7 +52,7 @@ export const DoctorListImpl = () => {
   const token = useSelector((state) => state.user.token);
   const userId = useSelector((state) => state.user.currentUser._id);
   const userType = useSelector((state) => state.user.userType);
-  const otherUsers = useSelector((state) => state.user.otherUsers);
+  const otherUsers = useSelector((state) => state.user.doctorUsers);
   const medicalRecords = useSelector(
     (state) => state.medicalRecord.medicalRecords
   );
@@ -69,7 +70,7 @@ export const DoctorListImpl = () => {
   React.useEffect(() => {
     const getDataFromDB = async () => {
       dispatch(removeOtherUsers());
-      const result = await getUsers("Patient", dispatch, token);
+      const result = await getDoctorUsers(dispatch, token);
       if (result) {
         console.log("Get user data success");
         setTrigger(trigger + "s");
@@ -110,28 +111,28 @@ export const DoctorListImpl = () => {
         const isoDateString = item.dateOfBirth;
         const dateOnlyString = isoDateString.substring(0, 10);
 
-        if (userType == "Doctor") {
-          item.requests.map((request) => {
-            if (request.doctorId === userId) {
-              flag = true;
-              doctorIDData = request.doctorId;
-              isRequest = request.isRequest;
-            }
-          });
-        }
+        // if (userType == "Doctor") {
+        //   item.requests.map((request) => {
+        //     if (request.doctorId === userId) {
+        //       flag = true;
+        //       doctorIDData = request.doctorId;
+        //       isRequest = request.isRequest;
+        //     }
+        //   });
+        // }
 
-        if (userType == "Pharmacist") {
-          medicalRecords.map((medicalRecordData) => {
-            if (item._id == medicalRecordData.recordFor) {
-              prescription = medicalRecordData.prescription;
-              pharmacyNote = medicalRecordData.pharmacyNote;
-              medicalRecordId = medicalRecordData._id;
-              console.log(prescription);
-              console.log(typeof prescription);
-              console.log(typeof medicalRecordData.prescription);
-            }
-          });
-        }
+        // if (userType == "Pharmacist") {
+        //   medicalRecords.map((medicalRecordData) => {
+        //     if (item._id == medicalRecordData.recordFor) {
+        //       prescription = medicalRecordData.prescription;
+        //       pharmacyNote = medicalRecordData.pharmacyNote;
+        //       medicalRecordId = medicalRecordData._id;
+        //       console.log(prescription);
+        //       console.log(typeof prescription);
+        //       console.log(typeof medicalRecordData.prescription);
+        //     }
+        //   });
+        // }
 
         await rowData.push({
           id: item._id,
@@ -199,7 +200,11 @@ export const DoctorListImpl = () => {
           setRequestTrigger(trigger + "s");
           Swal.fire("Request Sent!", "Request sent success.", "success");
         } else {
-          Swal.fire("Request Can't Sent!", "Request sent unsuccess.", "warning");
+          Swal.fire(
+            "Request Can't Sent!",
+            "Request sent unsuccess.",
+            "warning"
+          );
         }
       }
     });
@@ -340,7 +345,7 @@ export const DoctorListImpl = () => {
     { field: "col7", headerName: "Contact", width: 120 },
     {
       field: "col5",
-      headerName: "Have Children",
+      headerName: "Available Time",
       width: 120,
       renderCell: (params) => {
         return (
@@ -394,85 +399,31 @@ export const DoctorListImpl = () => {
       renderCell: (params) => {
         return (
           <>
-            {userType == "Doctor" ? (
-              params.row.isRequest == "None" ? (
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    color="blue"
-                    onClick={() => sendRequestToPatient(params.row.id)}
-                    //   endIcon={<AddIcon />}
-                    // onClick={() => createMedicalRecord(params.row.id)}
-                  >
-                    Request
-                  </Button>
-                </Stack>
-              ) : params.row.isRequest == "Sent" ? (
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    color="third"
-                    //   endIcon={<AddIcon />}
-                  >
-                    Request Sent
-                  </Button>
-                </Stack>
-              ) : params.row.isRequest == "Accept" ? (
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    color="secondary"
-                    //   endIcon={<AddIcon />}
-                    onClick={() => createMedicalRecord(params.row.id)}
-                  >
-                    Add a record
-                  </Button>
-                </Stack>
-              ) : params.row.isRequest == "Decline" ? (
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    color="danger"
-                    //   endIcon={<AddIcon />}
-                    onClick={() => sendRequestToPatient(params.row.id)}
-                  >
-                    Request Decline
-                  </Button>
-                </Stack>
-              ) : (
-                <></>
-              )
-            ) : (
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="brown"
-                  onClick={() =>
-                    handleOpen(params.row.id, params.row.prescriptionNote)
-                  }
-                >
-                  <VisibilityIcon />
-                </IconButton>
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="success"
-                  onClick={() =>
-                    addNewNote(
-                      params.row.medicalRecordId,
-                      params.row.pharmacyNote
-                    )
-                  }
-                >
-                  <EditIcon />
-                </IconButton>
-              </Stack>
-            )}
+            <Stack direction="row" alignItems="center" spacing={1}>
+              {/* <IconButton
+                aria-label="edit"
+                size="large"
+                color="brown"
+                onClick={() =>
+                  handleOpen(params.row.id, params.row.prescriptionNote)
+                }
+              >
+                <VisibilityIcon />
+              </IconButton> */}
+              <IconButton
+                aria-label="edit"
+                size="large"
+                color="success"
+                onClick={() =>
+                  addNewNote(
+                    params.row.medicalRecordId,
+                    params.row.pharmacyNote
+                  )
+                }
+              >
+                <EditIcon />
+              </IconButton>
+            </Stack>
           </>
         );
       },

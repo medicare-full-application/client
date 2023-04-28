@@ -16,8 +16,9 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { doctorRequestToPatient, patientRequestToDoctor } from "../../redux/userApiCalls";
+import { addNews } from "../../redux/newsApiCalls";
 
-export const MedicalRecordCreateImpl = () => {
+export const NewsCreateImpl = () => {
   const [type, settype] = useState("");
   const [inputs, setInputs] = useState({});
   const [file, setFile] = useState(null);
@@ -51,36 +52,21 @@ export const MedicalRecordCreateImpl = () => {
     const data = new FormData(e.currentTarget);
 
     let formData = {
-      medicalCondition: data.get("medicalCondition"),
-      prescription: data.get("prescription"),
-      doctorFee: data.get("doctorFee"),
-      medicineFee: data.get("medicineFee"),
-      user_id: userId,
+      title: data.get("title"),
+      description: data.get("description"),
+      content: data.get("content"),
     };
 
-    if (!data.get("medicalCondition")) {
+    if (!data.get("title")) {
       setevent_nameError(true);
-      setevent_nameMessageError("Medical Condition can't be empty!");
-    } else if (!data.get("prescription")) {
+      setevent_nameMessageError("Title can't be empty!");
+    } else if (!data.get("description")) {
       setdescriptionError(true);
       setdescriptionMessageError("Description can't be empty!");
-    } else if (!data.get("doctorFee")) {
+    } else if (!data.get("content")) {
       setdescriptionError(true);
-      setdescriptionMessageError("Doctor fee can't be empty!");
-    }else if (!data.get("medicineFee")) {
-      setdescriptionError(true);
-      setdescriptionMessageError("Medicine fee can't be empty!");
+      setdescriptionMessageError("Content can't be empty!");
     }else {
-      const data = {
-        patientId: patientId,
-        isRequest: "None",
-      };
-  
-      const patientData = {
-        doctorId: userId,
-        isRequest: "None",
-      };
-
       const fileName = new Date().getTime() + file.name;
       const storage = getStorage(app);
       const storageRef = ref(storage, fileName);
@@ -117,43 +103,27 @@ export const MedicalRecordCreateImpl = () => {
           getDownloadURL(uploadTask.snapshot.ref).then( async (downloadURL) => {
             let userData = {
               ...formData,
-              medicalReport: downloadURL,
-              recordBy: userId,
-              recordFor: patientId,
-              reportAdded: downloadURL ? true : false
+              imgUrl: downloadURL,
             };
 
-            const status = addMedicalRecord(userData, token);
-
-            const doctorRequestStatus = await doctorRequestToPatient(
-              userId,
-              data,
-              dispatch,
-              token
-            );
-            const patientRequestStatus = await patientRequestToDoctor(
-              patientId,
-              patientData,
-              dispatch,
-              token
-            );
+            const status = addNews(userData, token);
 
             if (status) {
               Swal.fire({
                 title: "Success!",
-                text: "Medical Record added success!",
+                text: "News added success!",
                 icon: "success",
                 confirmButtonText: "Ok",
                 confirmButtonColor: "#378cbb",
                 // showConfirmButton: false,
                 // timer: 2000,
               });
-              navigate("/medicalRecord");
+              navigate("/news");
             } else {
               Swal.fire({
                 icon: "error",
                 title: "Oops...",
-                text: "Medical Record added unsuccess!",
+                text: "News added unsuccess!",
               });
             }
           });
@@ -168,9 +138,9 @@ export const MedicalRecordCreateImpl = () => {
     <Grid container direction="column">
       <Grid container direction="row" justifyContent="space-between">
         <Grid item xs={6}>
-          <Typography variant="h3">Create Medical Record</Typography>
+          <Typography variant="h3">Add News</Typography>
         </Grid>
-        <Button variant="contained" color="third" href="/patient" startIcon={<ArrowBackIcon />}>
+        <Button variant="contained" color="third" href="/news" startIcon={<ArrowBackIcon />}>
           Back
         </Button>
       </Grid>
@@ -201,13 +171,14 @@ export const MedicalRecordCreateImpl = () => {
                   // defaultValue={employeeNo}
                   // variant="standard"
                   // disabled
+                  multiline
                   margin="normal"
                   required
                   fullWidth
-                  id="medicalCondition"
-                  label="Medical Condition"
-                  name="medicalCondition"
-                  autoComplete="medicalCondition"
+                  id="title"
+                  label="Title"
+                  name="title"
+                  autoComplete="title"
                   autoFocus
                   helperText={event_nameMessageError}
                   onClick={(e) => {
@@ -231,7 +202,7 @@ export const MedicalRecordCreateImpl = () => {
                   // required
                   fullWidth
                   id="file"
-                  label="Upload Medical Report"
+                  label="Image"
                   name="file"
                   autoComplete="file"
                   autoFocus
@@ -249,56 +220,6 @@ export const MedicalRecordCreateImpl = () => {
 
               <Grid item md={sizeForm}>
                 <TextField
-                  error={doctorFeeError}
-                  // defaultValue={employeeNo}
-                  // variant="standard"
-                  // disabled
-                  type="number"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="doctorFee"
-                  label="Doctor Fee(Rs.)"
-                  name="doctorFee"
-                  autoComplete="doctorFee"
-                  autoFocus
-                  helperText={doctorFeeMessageError}
-                  onClick={(e) => {
-                    setDoctorFeeError(false);
-                    setDoctorFeeMessageError("");
-                    setInputs((prev) => {
-                      return { ...prev, [e.target.name]: e.target.value };
-                    });
-                  }}
-                />
-              </Grid>
-              <Grid item md={sizeForm}>
-                <TextField
-                  error={medicineFeeError}
-                  // defaultValue={employeeNo}
-                  // variant="standard"
-                  // disabled
-                  type="number"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="medicineFee"
-                  label="Medicine Fee(Rs.)"
-                  name="medicineFee"
-                  autoComplete="medicineFee"
-                  autoFocus
-                  helperText={medicineFeeMessageError}
-                  onClick={(e) => {
-                    setMedicineFeeError(false);
-                    setMedicineFeeMessageError("");
-                    setInputs((prev) => {
-                      return { ...prev, [e.target.name]: e.target.value };
-                    });
-                  }}
-                />
-              </Grid>
-              <Grid item md={12}>
-                <TextField
                   error={descriptionError}
                   // defaultValue={product.fullname}
                   // variant="standard"
@@ -306,10 +227,10 @@ export const MedicalRecordCreateImpl = () => {
                   margin="normal"
                   required
                   fullWidth
-                  id="prescription"
-                  label="Prescription"
-                  name="prescription"
-                  autoComplete="prescription"
+                  id="description"
+                  label="Description"
+                  name="description"
+                  autoComplete="description"
                   autoFocus
                   helperText={descriptionMessageError}
                   onChange={(e) => {
@@ -322,6 +243,32 @@ export const MedicalRecordCreateImpl = () => {
                   }}
                 />
               </Grid>
+              <Grid item md={sizeForm}>
+                <TextField
+                  error={medicineFeeError}
+                  // defaultValue={employeeNo}
+                  // variant="standard"
+                  // disabled
+                  multiline
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="content"
+                  label="Content"
+                  name="content"
+                  autoComplete="content"
+                  autoFocus
+                  helperText={medicineFeeMessageError}
+                  onClick={(e) => {
+                    setMedicineFeeError(false);
+                    setMedicineFeeMessageError("");
+                    setInputs((prev) => {
+                      return { ...prev, [e.target.name]: e.target.value };
+                    });
+                  }}
+                />
+              </Grid>
+              
 
               {/* <Grid item md={sizeForm}></Grid> */}
               <Grid

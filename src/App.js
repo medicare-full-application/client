@@ -20,6 +20,10 @@ import { PatientList } from "./pages/userDashboards.js/patient/patientList/Patie
 import { DoctorProfile } from "./pages/userDashboards.js/doctor/profile/DoctorProfile";
 import { PharmacistProfile } from "./pages/userDashboards.js/pharmacist/profile/PharmacistProfile";
 import { AddChild } from "./pages/userDashboards.js/patient/addChild/AddChild";
+import { NewsList } from "./pages/news/NewsList";
+import { NewsCreate } from "./pages/news/NewsCreate";
+import { NewsUpdate } from "./pages/news/NewsUpdate";
+import { DoctorList } from "./pages/userDashboards.js/doctor/doctorList/DoctorList";
 
 function App() {
   const theme = createTheme({
@@ -77,6 +81,7 @@ function App() {
           <Route path="/createUser" element={<UserCreate />} />
           <Route path="/updateUser/:id" element={<UserUpdate />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/doctor" element={<DoctorList />} />
 
           <Route path="/doctorProfile" element={<DoctorProfile />} />
           <Route path="/patientProfile" element={<DoctorProfile />} />
@@ -89,6 +94,11 @@ function App() {
           <Route path="/medicalRecord" element={<MedicalRecordList />} />
           <Route path="/updateMedicalRecord/:id" element={<MedicalRecordUpdate />} />
           <Route path="/createMedicalRecord/:id" element={<MedicalRecordCreate />} />
+
+          {/* News */}
+          <Route path="/news" element={<NewsList />} />
+          <Route path="/news/:id" element={<NewsUpdate />} />
+          <Route path="/news/create" element={<NewsCreate />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

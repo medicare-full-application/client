@@ -162,7 +162,21 @@ export const SlideBarListItems = () => {
       },
       {
         id: "leftbar-listItem-10",
-        listName: "All Users",
+        listName: "All Doctors",
+        icon: <BookmarksIcon />,
+        link: "/doctor",
+        name: "dashboard",
+      },
+      {
+        id: "leftbar-listItem-10",
+        listName: "All Patients",
+        icon: <BookmarksIcon />,
+        link: "/patient",
+        name: "dashboard",
+      },
+      {
+        id: "leftbar-listItem-10",
+        listName: "All Pharmacist",
         icon: <BookmarksIcon />,
         link: "/dashboard",
         name: "dashboard",

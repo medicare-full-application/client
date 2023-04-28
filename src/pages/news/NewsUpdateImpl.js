@@ -12,12 +12,16 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import { getUsers, updateNormalUser } from "../../redux/userApiCalls";
-import { getMedicalRecord, updateMedicalRecord } from "../../redux/medicalRecordApiCalls";
+import {
+  getMedicalRecord,
+  updateMedicalRecord,
+} from "../../redux/medicalRecordApiCalls";
+import { getNews, updateNews } from "../../redux/newsApiCalls";
 
-export const MedicalRecordUpdateImpl = () => {
+export const NewsUpdateImpl = () => {
   const location = useLocation();
   // const productId = location.pathname.split("/")[3];
-  const medicalRecordId = window.location.pathname.split("/")[2];
+  const newsId = window.location.pathname.split("/")[2];
   // console.log(productId);
   const [pStats, setPStats] = useState([]);
   const [show, setShow] = useState(false);
@@ -36,21 +40,21 @@ export const MedicalRecordUpdateImpl = () => {
   const [priceMessageError, setpriceMessageError] = useState("");
   const [event_dateMessageError, setevent_dateMessageError] = useState("");
   const [event_timeMessageError, setevent_timeMessageError] = useState("");
-  const [event_locationMessageError, setevent_locationMessageError] = useState("");
+  const [event_locationMessageError, setevent_locationMessageError] =
+    useState("");
 
   const dispatch = useDispatch();
 
   const token = useSelector((state) => state.user.token);
   const userId = useSelector((state) => state.user.currentUser.user_id);
 
-  const currentUser = useSelector((state) =>
-    state.medicalRecord.medicalRecords.find((user) => user._id == medicalRecordId)
+  const newsData = useSelector((state) =>
+    state.news.newsData.find((item) => item.isActivate)
   );
-  console.log(currentUser);
 
   React.useEffect(() => {
     const getDataFromDB = async () => {
-      const result = await getMedicalRecord(dispatch, token);
+      const result = await getNews(dispatch, token);
       if (result) {
         console.log("Get user data success");
       } else {
@@ -95,35 +99,20 @@ export const MedicalRecordUpdateImpl = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const formNewData = {
-      event_id: medicalRecordId,
-      user_id: userId,
-      event_name: formData.get("event_name")
-        ? formData.get("event_name")
-        : currentUser.event_name,
+      title: formData.get("title") ? formData.get("title") : newsData.title,
       description: formData.get("description")
         ? formData.get("description")
-        : currentUser.description,
-      price: formData.get("price") ? formData.get("price") : currentUser.price,
-      event_location: formData.get("event_location")
-        ? formData.get("event_location")
-        : currentUser.event_location,
-      event_date: formData.get("event_date")
-        ? formData.get("event_date")
-        : currentUser.event_date,
-      event_time: formData.get("event_time")
-        ? formData.get("event_time")
-        : currentUser.event_location,
+        : newsData.description,
+      content: formData.get("content")
+        ? formData.get("content")
+        : newsData.content,
 
       // img: product.img,
     };
 
     console.log(formNewData);
 
-    const result = await updateMedicalRecord(
-      formNewData,
-      dispatch,
-      token
-    );
+    const result = await updateNews(newsId, formNewData, dispatch, token);
 
     setTrigger(trigger + "su");
     // console.log(result);
@@ -145,13 +134,13 @@ export const MedicalRecordUpdateImpl = () => {
   return (
     <div>
       <div className="productTitleContainer">
-        <h1 className="addTitle">Medical Record Detail Edit</h1>
+        <h1 className="addTitle">News Detail Edit</h1>
         <div>
           <Button
             variant="contained"
-            href="/medicalRecord"
+            href="/news"
             style={{ marginRight: 10 }}
-            color="warning"
+            color="third"
             // endIcon={<AddIcon />}
           >
             Back
@@ -160,8 +149,8 @@ export const MedicalRecordUpdateImpl = () => {
           {/* <button className="color-contained-button">Create</button> */}
           <Button
             variant="contained"
-            href="/createMedicalRecord"
-            // color="secondary"
+            href="/news/create"
+            color="secondary"
             // endIcon={<AddIcon />}
           >
             Create
@@ -170,36 +159,36 @@ export const MedicalRecordUpdateImpl = () => {
         </div>
       </div>
       <div className="productTop">
-        <div className="productTopLeft">
-          {/* <Charts data={pStats} dataKey1="Sales" title="Event Registration" /> */}
-        </div>
+        {/* <div className="productTopLeft">
+          <Charts data={pStats} dataKey1="Sales" title="Event Registration" />
+        </div> */}
         <div className="productTopRight">
           <div className="productInfoTop">
-            <img src={currentUser.user_img} alt="" className="productInfoImg" />
-            <span className="productName">Medical Record Details</span>
+            {/* <img src={currentUser.user_img} alt="" className="productInfoImg" /> */}
+            <span className="productName">News Details</span>
           </div>
           <div className="productInfoBottom">
-            <div className="productInfoItem">
-              <span className="productInfoKey">Event ID:</span>
-              <span className="productInfoValue">{medicalRecordId}</span>
+            <div className="productInfoItem" style={{paddingBottom:"10px"}}>
+              <span className="productInfoKey">News ID:</span>
+              <span className="productInfoValue">{newsData._id}</span>
             </div>
-            <div className="productInfoItem">
-              <span className="productInfoKey">Event Name:</span>
-              <span className="productInfoValue">{currentUser.event_name}</span>
+            <div className="productInfoItem" style={{paddingBottom:"10px"}}>
+              <span className="productInfoKey">Title:</span>
+              <span className="productInfoValue">{newsData.title}</span>
             </div>
-            <div className="productInfoItem">
-              <span className="productInfoKey">Event Date:</span>
-              <span className="productInfoValue">{currentUser.event_date}</span>
+            <div className="productInfoItem" style={{paddingBottom:"10px"}}>
+              <span className="productInfoKey">Description:</span>
+              <span className="productInfoValue">{newsData.description}</span>
             </div>
-            <div className="productInfoItem">
-              <span className="productInfoKey">Location:</span>
-              <span className="productInfoValue">{currentUser.event_location}</span>
+            <div className="productInfoItem" style={{paddingBottom:"10px"}}>
+              <span className="productInfoKey">Date:</span>
+              <span className="productInfoValue">{newsData.date.substring(0, 10)}</span>
             </div>
           </div>
         </div>
       </div>
       <div className="productBottom">
-        <h2 className="h3Title">Update Event</h2>
+        <h2 className="h3Title">Update News</h2>
         <Box
           sx={{
             my: 1,
@@ -220,21 +209,22 @@ export const MedicalRecordUpdateImpl = () => {
             // sx={{ m: 5 }}
           >
             {/* <div className="productFormLeft"> */}
-            <Grid container spacing={4}>
-              <Grid item md={10}>
+            <Grid container spacing={2}>
+              {/* <Grid item md={12}> */}
                 <Grid container spacing={2}>
-                  <Grid item md={4}>
+                  <Grid item md={6}>
                     <TextField
                       error={event_nameError}
-                      defaultValue={currentUser.event_name}
+                      defaultValue={newsData.title}
                       variant="standard"
                       margin="normal"
+                      multiline
                       // required
                       fullWidth
-                      id="event_name"
-                      label="Event Name"
-                      name="event_name"
-                      autoComplete="event_name"
+                      id="title"
+                      label="Title"
+                      name="title"
+                      autoComplete="title"
                       autoFocus
                       helperText={event_nameMessageError}
                       onChange={() => {
@@ -243,12 +233,13 @@ export const MedicalRecordUpdateImpl = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item md={4}>
+                  <Grid item md={6}>
                     <TextField
                       error={descriptionError}
-                      defaultValue={currentUser.description}
+                      defaultValue={newsData.description}
                       variant="standard"
                       margin="normal"
+                      multiline
                       // required
                       fullWidth
                       id="description"
@@ -260,6 +251,27 @@ export const MedicalRecordUpdateImpl = () => {
                       onChange={() => {
                         setdescriptionError(false);
                         setdescriptionMessageError("");
+                      }}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextField
+                      error={priceError}
+                      defaultValue={newsData.content}
+                      variant="standard"
+                      margin="normal"
+                      multiline
+                      // required
+                      fullWidth
+                      id="content"
+                      label="Content"
+                      name="content"
+                      autoComplete="content"
+                      autoFocus
+                      helperText={priceMessageError}
+                      onChange={() => {
+                        setpriceError(false);
+                        setpriceMessageError("");
                       }}
                     />
                   </Grid>
@@ -317,89 +329,7 @@ export const MedicalRecordUpdateImpl = () => {
                       ))}
                     </TextField>
                   </Grid> */}
-                  <Grid item md={4}>
-                    <TextField
-                      error={priceError}
-                      defaultValue={currentUser.price}
-                      variant="standard"
-                      margin="normal"
-                      // required
-                      type="number"
-                      fullWidth
-                      id="price"
-                      label="Price"
-                      name="price"
-                      autoComplete="price"
-                      autoFocus
-                      helperText={priceMessageError}
-                      onChange={() => {
-                        setpriceError(false);
-                        setpriceMessageError("");
-                      }}
-                    />
-                  </Grid>
-                  <Grid item md={4}>
-                    <TextField
-                      error={event_dateError}
-                      defaultValue={currentUser.event_date}
-                      variant="standard"
-                      margin="normal"
-                      // required
-                      type="date"
-                      fullWidth
-                      id="event_date"
-                      label="event_date"
-                      name="Event Date"
-                      autoComplete="event_date"
-                      autoFocus
-                      helperText={event_dateMessageError}
-                      onChange={() => {
-                        setevent_dateError(false);
-                        setevent_dateMessageError("");
-                      }}
-                    />
-                  </Grid>
-                  <Grid item md={4}>
-                    <TextField
-                      error={event_timeError}
-                      defaultValue={currentUser.event_time}
-                      variant="standard"
-                      margin="normal"
-                      // required
-                      type="time"
-                      fullWidth
-                      id="event_time"
-                      label="event_time"
-                      name="Event Time"
-                      autoComplete="event_time"
-                      autoFocus
-                      helperText={event_timeMessageError}
-                      onChange={() => {
-                        setevent_timeError(false);
-                        setevent_timeMessageError("");
-                      }}
-                    />
-                  </Grid>
-                  <Grid item md={4}>
-                    <TextField
-                      error={event_locationError}
-                      defaultValue={currentUser.event_location}
-                      variant="standard"
-                      margin="normal"
-                      // required
-                      fullWidth
-                      id="event_location"
-                      label="event_location"
-                      name="Event Location"
-                      autoComplete="event_location"
-                      autoFocus
-                      helperText={event_locationMessageError}
-                      onChange={() => {
-                        setevent_locationError(false);
-                        setevent_locationMessageError("");
-                      }}
-                    />
-                  </Grid>
+                  
                 </Grid>
               </Grid>
               <Grid item md={2}>
@@ -423,14 +353,14 @@ export const MedicalRecordUpdateImpl = () => {
                   <Button
                     variant="contained"
                     type="submit"
-                    // color="secondary"
+                    color="secondary"
                     // endIcon={<AddIcon />}
                   >
                     Update
                   </Button>
                 </div>
               </Grid>
-            </Grid>
+            {/* </Grid> */}
             {/* </form> */}
           </Box>
         </Box>

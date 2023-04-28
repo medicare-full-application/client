@@ -63,7 +63,7 @@ export const MedicalRecordCreateImpl = () => {
       setevent_nameMessageError("Medical Condition can't be empty!");
     } else if (!data.get("prescription")) {
       setdescriptionError(true);
-      setdescriptionMessageError("Description can't be empty!");
+      setdescriptionMessageError("Prescription can't be empty!");
     } else if (!data.get("doctorFee")) {
       setdescriptionError(true);
       setdescriptionMessageError("Doctor fee can't be empty!");

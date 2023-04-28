@@ -1,11 +1,9 @@
 import React from "react";
 import { Grid } from "@mui/material";
 import MainHeader from "../../components/MainHeader";
-import { useDispatch, useSelector } from "react-redux";
 import { NewsListImpl } from "./NewsListImpl";
 
 export const NewsList = () => {
-  const userType = useSelector((state) => state.user.userType);
   return (
     <React.Fragment>
       <MainHeader value={0} />
