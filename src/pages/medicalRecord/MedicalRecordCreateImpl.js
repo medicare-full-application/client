@@ -15,7 +15,10 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { doctorRequestToPatient, patientRequestToDoctor } from "../../redux/userApiCalls";
+import {
+  doctorRequestToPatient,
+  patientRequestToDoctor,
+} from "../../redux/userApiCalls";
 
 export const MedicalRecordCreateImpl = () => {
   const [type, settype] = useState("");
@@ -64,95 +67,151 @@ export const MedicalRecordCreateImpl = () => {
     } else if (!data.get("doctorFee")) {
       setdescriptionError(true);
       setdescriptionMessageError("Doctor fee can't be empty!");
-    }else {
-      const data = {
-        patientId: patientId,
-        isRequest: "None",
-      };
-  
-      const patientData = {
-        doctorId: userId,
-        isRequest: "None",
-      };
+    } else {
+      if (file) {
+        const data = {
+          patientId: patientId,
+          isRequest: "None",
+        };
 
-      const fileName = new Date().getTime() + file.name;
-      const storage = getStorage(app);
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
+        const patientData = {
+          doctorId: userId,
+          isRequest: "None",
+        };
 
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const prevProgress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        const fileName = new Date().getTime() + file.name;
+        const storage = getStorage(app);
+        const storageRef = ref(storage, fileName);
+        const uploadTask = uploadBytesResumable(storageRef, file);
 
-          console.log("Upload is " + prevProgress + "% done");
-          switch (snapshot.state) {
-            case "paused":
-              console.log("Upload is paused");
-              break;
-            case "running":
-              console.log("Upload is running");
-              break;
-            default:
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const prevProgress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+            console.log("Upload is " + prevProgress + "% done");
+            switch (snapshot.state) {
+              case "paused":
+                console.log("Upload is paused");
+                break;
+              case "running":
+                console.log("Upload is running");
+                break;
+              default:
+            }
+          },
+          (error) => {
+            // Handle unsuccessful uploads
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Image added unsuccess!",
+            });
+          },
+          () => {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            getDownloadURL(uploadTask.snapshot.ref).then(
+              async (downloadURL) => {
+                let userData = {
+                  ...formData,
+                  medicalReport: downloadURL,
+                  recordBy: userId,
+                  recordFor: patientId,
+                  reportAdded: downloadURL ? true : false,
+                };
+
+                const status = addMedicalRecord(userData, token);
+
+                const doctorRequestStatus = await doctorRequestToPatient(
+                  userId,
+                  data,
+                  dispatch,
+                  token
+                );
+                const patientRequestStatus = await patientRequestToDoctor(
+                  patientId,
+                  patientData,
+                  dispatch,
+                  token
+                );
+
+                if (status) {
+                  Swal.fire({
+                    title: "Success!",
+                    text: "Medical Record added success!",
+                    icon: "success",
+                    confirmButtonText: "Ok",
+                    confirmButtonColor: "#378cbb",
+                    // showConfirmButton: false,
+                    // timer: 2000,
+                  });
+                  navigate("/medicalRecord");
+                } else {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Medical Record added unsuccess!",
+                  });
+                }
+              }
+            );
           }
-        },
-        (error) => {
-          // Handle unsuccessful uploads
+        );
+      } else {
+        const data = {
+          patientId: patientId,
+          isRequest: "None",
+        };
+
+        const patientData = {
+          doctorId: userId,
+          isRequest: "None",
+        };
+
+        let userData = {
+          ...formData,
+          // medicalReport: downloadURL,
+          recordBy: userId,
+          recordFor: patientId,
+          reportAdded: false,
+        };
+
+        const status = addMedicalRecord(userData, token);
+
+        const doctorRequestStatus = await doctorRequestToPatient(
+          userId,
+          data,
+          dispatch,
+          token
+        );
+        const patientRequestStatus = await patientRequestToDoctor(
+          patientId,
+          patientData,
+          dispatch,
+          token
+        );
+
+        if (status) {
+          Swal.fire({
+            title: "Success!",
+            text: "Medical Record added success!",
+            icon: "success",
+            confirmButtonText: "Ok",
+            confirmButtonColor: "#378cbb",
+            // showConfirmButton: false,
+            // timer: 2000,
+          });
+          navigate("/medicalRecord");
+        } else {
           Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: "Image added unsuccess!",
-          });
-        },
-        () => {
-          // Handle successful uploads on complete
-          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-          getDownloadURL(uploadTask.snapshot.ref).then( async (downloadURL) => {
-            let userData = {
-              ...formData,
-              medicalReport: downloadURL,
-              recordBy: userId,
-              recordFor: patientId,
-              reportAdded: downloadURL ? true : false
-            };
-
-            const status = addMedicalRecord(userData, token);
-
-            const doctorRequestStatus = await doctorRequestToPatient(
-              userId,
-              data,
-              dispatch,
-              token
-            );
-            const patientRequestStatus = await patientRequestToDoctor(
-              patientId,
-              patientData,
-              dispatch,
-              token
-            );
-
-            if (status) {
-              Swal.fire({
-                title: "Success!",
-                text: "Medical Record added success!",
-                icon: "success",
-                confirmButtonText: "Ok",
-                confirmButtonColor: "#378cbb",
-                // showConfirmButton: false,
-                // timer: 2000,
-              });
-              navigate("/medicalRecord");
-            } else {
-              Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Medical Record added unsuccess!",
-              });
-            }
+            text: "Medical Record added unsuccess!",
           });
         }
-      );
+      }
     }
 
     console.log(formData);
@@ -164,7 +223,12 @@ export const MedicalRecordCreateImpl = () => {
         <Grid item xs={6}>
           <Typography variant="h3">Create Medical Record</Typography>
         </Grid>
-        <Button variant="contained" color="third" href="/patient" startIcon={<ArrowBackIcon />}>
+        <Button
+          variant="contained"
+          color="third"
+          href="/patient"
+          startIcon={<ArrowBackIcon />}
+        >
           Back
         </Button>
       </Grid>
@@ -213,8 +277,7 @@ export const MedicalRecordCreateImpl = () => {
                   }}
                 />
               </Grid>
-              
-              
+
               <Grid item md={sizeForm}>
                 <TextField
                   // error={imageError}

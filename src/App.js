@@ -48,6 +48,9 @@ function App() {
       danger: {
         main: "#c62828"
       },
+      red: {
+        main: "#d33"
+      },
       blue: {
         main: "#1e88e5",
         fontWeight: "bold",

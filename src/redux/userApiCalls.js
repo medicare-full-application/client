@@ -308,7 +308,7 @@ export const getTotalIncomeFromDoctor = async (id, dispatch, token) => {
       },
     });
     console.log(res);
-    dispatch(addTotalIncomeSuccess(res.data[0].result));
+    dispatch(addTotalIncomeSuccess(res.data[0].totalIncome));
     return 1;
   } catch (err) {
     dispatch(updateUserFailure());

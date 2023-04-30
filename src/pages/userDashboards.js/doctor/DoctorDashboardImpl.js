@@ -5,7 +5,10 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import FeaturedInfo from "../../../components/featuredInfo/FeaturedInfo";
 import Charts from "../../../components/charts/Charts";
-import { getMonthlyIncomeFromDoctor, getTotalIncomeFromDoctor } from "../../../redux/userApiCalls";
+import {
+  getMonthlyIncomeFromDoctor,
+  getTotalIncomeFromDoctor,
+} from "../../../redux/userApiCalls";
 
 export const DoctorDashboardImpl = () => {
   const [userStats, setUserStats] = useState([]);
@@ -19,7 +22,9 @@ export const DoctorDashboardImpl = () => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
   const userId = useSelector((state) => state.user.currentUser._id);
-  const medicalRegNo = useSelector((state) => state.user.currentUser.medicalRegNo);
+  const medicalRegNo = useSelector(
+    (state) => state.user.currentUser.medicalRegNo
+  );
   const monthlyIncome = useSelector((state) => state.user.monthlyIncome);
   const totalIncome = useSelector((state) => state.user.totalIncome);
   // const otherUsers = useSelector((state) => state.user.otherUsers);
@@ -46,7 +51,16 @@ export const DoctorDashboardImpl = () => {
 
   useEffect(() => {
     const getCountInventoryData = async () => {
-      const result1 = await getMonthlyIncomeFromDoctor(userId, 2023, 4, dispatch, token);
+      const today = new Date();
+      const currentYear = today.getFullYear();
+      const currentMonth = today.getMonth() + 1;
+      const result1 = await getMonthlyIncomeFromDoctor(
+        userId,
+        currentYear,
+        currentMonth,
+        dispatch,
+        token
+      );
       if (result1) {
         setOther(result1.length);
         console.log("Success");
@@ -92,7 +106,7 @@ export const DoctorDashboardImpl = () => {
     {
       index: 1,
       title: "Monthly Income",
-      number: "Rs."+monthlyIncome,
+      number: "Rs." + monthlyIncome,
       // percentage: -1.4,
       isDowngrade: false,
       // text: "Compared to last month",
@@ -108,7 +122,7 @@ export const DoctorDashboardImpl = () => {
     {
       index: 3,
       title: "Today Income",
-      number: totalIncome ? "Rs."+totalIncome : "Rs."+0,
+      number: totalIncome ? "Rs." + totalIncome : "Rs." + 0,
       // percentage: -1.4,
       isDowngrade: false,
       // text: "Compared to last month",

@@ -451,7 +451,7 @@ export const DoctorListImpl = () => {
     {
       field: "action",
       headerName: userType == "Admin" ? "User Activation" : "Action",
-      width: 200,
+      width: 450,
       renderCell: (params) => {
         return (
           <>
@@ -519,7 +519,7 @@ export const DoctorListImpl = () => {
                     <Button
                       variant="contained"
                       size="small"
-                      color="third"
+                      color="red"
                       onClick={() =>
                         sendRequestToPatientAdmin(params.row.id, "Decline")
                       }
