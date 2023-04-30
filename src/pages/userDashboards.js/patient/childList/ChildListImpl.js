@@ -268,7 +268,7 @@ export const ChildListImpl = () => {
           token
         );
         if (result) {
-          setRequestTrigger("Q");
+          setRequestTrigger(requestTrigger+"Q");
           Swal.fire("Updated!", "Your note successfully added.", "success");
         } else {
           Swal.fire(
@@ -457,7 +457,7 @@ export const ChildListImpl = () => {
               alignItems="center"
             >
               <div>
-                <h2>Patients</h2>
+                <h2>Patient Children</h2>
               </div>
               <div>
                 <Button

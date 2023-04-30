@@ -13,6 +13,7 @@ import {
   getDoctorUsers,
   getUsers,
   patientRequestToDoctor,
+  updateUser,
 } from "../../../../redux/userApiCalls";
 import { TableComponent } from "../../../../components/TableComponent";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +22,10 @@ import ClearIcon from "@mui/icons-material/Clear";
 import CelebrationIcon from "@mui/icons-material/Celebration";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import LinearProgress from "@mui/material/LinearProgress";
-import { removeOtherUsers } from "../../../../redux/userRedux";
+import {
+  removeDoctorUsers,
+  removeOtherUsers,
+} from "../../../../redux/userRedux";
 import { removeMedicalRecords } from "../../../../redux/medicalRecordRedux";
 import {
   getMedicalRecord,
@@ -30,6 +34,12 @@ import {
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import InputAdornment from "@mui/material/InputAdornment";
+import FormHelperText from "@mui/material/FormHelperText";
+import Input from "@mui/material/Input";
+import FormControl from "@mui/material/FormControl";
+import SendIcon from "@mui/icons-material/Send";
 
 const style = {
   position: "absolute",
@@ -46,30 +56,29 @@ const style = {
 
 export const DoctorListImpl = () => {
   const [loading, setLoading] = useState(true);
-  const [loadingRecord, setLoadingRecord] = useState(true);
   const [trigger, setTrigger] = useState("s");
   const [requestTrigger, setRequestTrigger] = useState("s");
   const token = useSelector((state) => state.user.token);
   const userId = useSelector((state) => state.user.currentUser._id);
   const userType = useSelector((state) => state.user.userType);
-  const otherUsers = useSelector((state) => state.user.doctorUsers);
-  const medicalRecords = useSelector(
-    (state) => state.medicalRecord.medicalRecords
-  );
-  //   const [deleteTrigger, setDeleteTrigger] = React.useState("");
+  const doctorUsers = useSelector((state) => state.user.doctorUsers);
+
   const [open, setOpen] = React.useState(false);
 
-  //   const [deleteTrigger, setDeleteTrigger] = React.useState("");
+  const [id, setId] = React.useState(null);
   const [title, setTitle] = React.useState(null);
-  const [content, setContent] = React.useState(null);
+  const [time, setTime] = React.useState(null);
+  const [availableTime, setAvailableTime] = React.useState(null);
+  const [timeFlag, setTimeFlag] = React.useState(true);
   const [rows, setRows] = React.useState([]);
+  const [inputs, setInputs] = React.useState({});
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   React.useEffect(() => {
     const getDataFromDB = async () => {
-      dispatch(removeOtherUsers());
+      dispatch(removeDoctorUsers());
       const result = await getDoctorUsers(dispatch, token);
       if (result) {
         console.log("Get user data success");
@@ -83,56 +92,11 @@ export const DoctorListImpl = () => {
   }, [loading, requestTrigger]);
 
   React.useEffect(() => {
-    const getDataFromDB = async () => {
-      dispatch(removeMedicalRecords());
-      const result = await getMedicalRecord(dispatch, token);
-      if (result) {
-        console.log("Get user data success");
-        setTrigger(trigger + "s");
-        setLoadingRecord(false);
-      } else {
-        console.log("Get user data unsuccess");
-      }
-    };
-    getDataFromDB();
-  }, [loadingRecord, requestTrigger]);
-
-  React.useEffect(() => {
     const getNormalUserData = async () => {
       let rowData = [];
-      let flag = false;
-      let doctorIDData = null;
-      let isRequest = "None";
-
-      let prescription = null;
-      let pharmacyNote = null;
-      let medicalRecordId = null;
-      otherUsers.map(async (item) => {
+      doctorUsers.map(async (item) => {
         const isoDateString = item.dateOfBirth;
         const dateOnlyString = isoDateString.substring(0, 10);
-
-        // if (userType == "Doctor") {
-        //   item.requests.map((request) => {
-        //     if (request.doctorId === userId) {
-        //       flag = true;
-        //       doctorIDData = request.doctorId;
-        //       isRequest = request.isRequest;
-        //     }
-        //   });
-        // }
-
-        // if (userType == "Pharmacist") {
-        //   medicalRecords.map((medicalRecordData) => {
-        //     if (item._id == medicalRecordData.recordFor) {
-        //       prescription = medicalRecordData.prescription;
-        //       pharmacyNote = medicalRecordData.pharmacyNote;
-        //       medicalRecordId = medicalRecordData._id;
-        //       console.log(prescription);
-        //       console.log(typeof prescription);
-        //       console.log(typeof medicalRecordData.prescription);
-        //     }
-        //   });
-        // }
 
         await rowData.push({
           id: item._id,
@@ -146,16 +110,9 @@ export const DoctorListImpl = () => {
           col8: item.email,
           col9: item.userStatus,
           col10: dateOnlyString,
-          flag: item.flag,
-          isRequest: isRequest,
-          prescriptionNote: prescription,
-          pharmacyNote: pharmacyNote,
-          medicalRecordId: medicalRecordId,
+          startTime: item.startTime,
+          endTime: item.endTime,
         });
-
-        prescription = null;
-        pharmacyNote = null;
-        medicalRecordId = null;
       });
       setRows(rowData);
       console.log(rowData);
@@ -210,77 +167,10 @@ export const DoctorListImpl = () => {
     });
   };
 
-  const handleOpen = (id, prescription) => {
-    console.log(id);
-    console.log(prescription);
-    if (prescription != null) {
-      const splittedArr = prescription.split(" ");
-
-      let outputStr = "";
-      for (let i = 0; i < splittedArr.length; i += 2) {
-        outputStr += splittedArr[i] + " " + splittedArr[i + 1] + "\n";
-      }
-      console.log(outputStr);
-      setOpen(true);
-      setTitle("Prescription");
-      setContent(outputStr);
-    } else {
-      Swal.fire("No Prescription!", "There is no prescription..", "warning");
-    }
+  const handleOpen = () => {
+    setOpen(true);
   };
   const handleClose = () => setOpen(false);
-
-  const addNewNote = async (medicalRecordId, pharmacyNote) => {
-    console.log(medicalRecordId);
-
-    if (medicalRecordId != null) {
-      const { value: text } = await Swal.fire({
-        input: "textarea",
-        inputLabel: "Pharmacy Note",
-        inputPlaceholder: "Type your message here......",
-        inputValue: pharmacyNote,
-        // inputValue: 'Type your message here...',
-        inputValidator: (value) => {
-          if (!value) {
-            return "Add New Note!";
-          }
-        },
-        // inputAttributes: {
-        //   'aria-label': 'Type your message here'
-        // },
-        showCancelButton: true,
-      });
-
-      if (text) {
-        const data = {
-          pharmacyNote: text,
-        };
-        const result = await updateMedicalRecord(
-          medicalRecordId,
-          data,
-          dispatch,
-          token
-        );
-        if (result) {
-          setRequestTrigger("Q");
-          Swal.fire("Updated!", "Your note successfully added.", "success");
-        } else {
-          Swal.fire(
-            "Update Unsuccess!",
-            "Your note added unsuccessfully..",
-            "warning"
-          );
-        }
-        // Swal.fire(text);
-      }
-    } else {
-      Swal.fire(
-        "Request Can't Sent!",
-        "This patient hasn't any medical record..",
-        "warning"
-      );
-    }
-  };
 
   const deleteItem = (id) => {
     Swal.fire({
@@ -299,14 +189,7 @@ export const DoctorListImpl = () => {
     });
   };
 
-  const createMedicalRecord = (id) => {
-    console.log(id);
-    navigate(`/createMedicalRecord/${id}`);
-  };
-
-  const changeItem = (id) => {
-    console.log(id);
-    //API call
+  const changeItem = (id, userStatus) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -314,11 +197,90 @@ export const DoctorListImpl = () => {
       showCancelButton: true,
       confirmButtonColor: "#378cbb",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Change it!",
-    }).then((result) => {
+      confirmButtonText: "Yes, Update it!",
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        alert(id);
-        Swal.fire("Change!", "User activation changed.", "success");
+        const data = {
+          userStatus: userStatus,
+        };
+        const result = await updateUser(id, "Doctor", data, dispatch, token);
+        if (result) {
+          setRequestTrigger(requestTrigger + "Q");
+          Swal.fire("Updated!", "Your note successfully added.", "success");
+        } else {
+          Swal.fire(
+            "Update Unsuccess!",
+            "Your note added unsuccessfully..",
+            "warning"
+          );
+        }
+      }
+    });
+  };
+
+  const checkAvailableTime = (id) => {
+    console.log(id);
+  };
+
+  const editDoctor = (id) => {
+    console.log(id);
+  };
+
+  const changeStartTime = (id) => {
+    handleOpen();
+    setTitle("Set Start Time");
+    setTime("Start Time");
+    setTimeFlag(true);
+    setId(id);
+    console.log(inputs);
+  };
+
+  const changeEndTime = (id) => {
+    handleOpen();
+    setTitle("Set End Time");
+    setTime("End Time");
+    setTimeFlag(false);
+    setId(id);
+    console.log(inputs);
+  };
+
+  const handleChangeData = (e) => {
+    setInputs((prev) => {
+      return { [e.target.name]: e.target.value };
+    });
+  };
+
+  const setTimeSubmit = async (e) => {
+    // await updateUser();
+    // console.log(e.target.value);
+    handleClose();
+    console.log(inputs);
+    console.log(id);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#378cbb",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Update!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const result = await updateUser(id, "Doctor", inputs, dispatch, token);
+        if (result) {
+          console.log("Patient child registration completed!");
+          Swal.fire("Available Time!", "Available time set!", "success");
+          setRequestTrigger(requestTrigger + "s");
+          // navigate("/addChild");
+        } else {
+          Swal.fire(
+            "Available Time!",
+            "Available time set uncompleted!",
+            "warning"
+          );
+        }
+      } else {
+        handleOpen();
       }
     });
   };
@@ -344,31 +306,26 @@ export const DoctorListImpl = () => {
     { field: "col6", headerName: "Address", width: 220 },
     { field: "col7", headerName: "Contact", width: 120 },
     {
-      field: "col5",
-      headerName: "Available Time",
-      width: 120,
+      field: "startTime",
+      headerName: "Available Start Time",
+      width: 180,
       renderCell: (params) => {
         return (
           <>
             <Stack direction="row" alignItems="center" spacing={1}>
-              {params.row.col5}
-              {params.row.col5 ? (
+              {params.row.startTime
+                ? params.row.startTime
+                : userType == "Admin"
+                ? "Set Start Time"
+                : "Not set yet!"}
+              {userType == "Admin" && (
                 <IconButton
                   aria-label="edit"
                   size="large"
                   color="success"
-                  // onClick={() => changeItem(params.row.id)}
+                  onClick={() => changeStartTime(params.row.id)}
                 >
-                  <CheckIcon />
-                </IconButton>
-              ) : (
-                <IconButton
-                  aria-label="delete"
-                  size="large"
-                  color="error"
-                  // onClick={() => changeItem(params.row.id)}
-                >
-                  <ClearIcon />
+                  <EditIcon />
                 </IconButton>
               )}
             </Stack>
@@ -376,7 +333,34 @@ export const DoctorListImpl = () => {
         );
       },
     },
-
+    {
+      field: "endTime",
+      headerName: "Available End Time",
+      width: 180,
+      renderCell: (params) => {
+        return (
+          <>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              {params.row.endTime
+                ? params.row.endTime
+                : userType == "Admin"
+                ? "Set Start Time"
+                : "Not set yet!"}
+              {userType == "Admin" && (
+                <IconButton
+                  aria-label="edit"
+                  size="large"
+                  color="success"
+                  onClick={() => changeEndTime(params.row.id)}
+                >
+                  <EditIcon />
+                </IconButton>
+              )}
+            </Stack>
+          </>
+        );
+      },
+    },
     {
       field: "col10",
       headerName: "Birthday",
@@ -394,36 +378,53 @@ export const DoctorListImpl = () => {
     },
     {
       field: "action",
-      headerName: "Action",
+      headerName: userType == "Admin" ? "User Activation" : "Available Time",
       width: 200,
       renderCell: (params) => {
         return (
           <>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              {/* <IconButton
-                aria-label="edit"
-                size="large"
-                color="brown"
-                onClick={() =>
-                  handleOpen(params.row.id, params.row.prescriptionNote)
-                }
-              >
-                <VisibilityIcon />
-              </IconButton> */}
-              <IconButton
-                aria-label="edit"
-                size="large"
-                color="success"
-                onClick={() =>
-                  addNewNote(
-                    params.row.medicalRecordId,
-                    params.row.pharmacyNote
-                  )
-                }
-              >
-                <EditIcon />
-              </IconButton>
-            </Stack>
+            {userType == "Admin" ? (
+              <Stack direction="row" alignItems="center" spacing={1}>
+                {params.row.col9 ? (
+                  <IconButton
+                    aria-label="edit"
+                    size="large"
+                    color="success"
+                    onClick={() => changeItem(params.row.id, false)}
+                  >
+                    <CheckIcon />
+                  </IconButton>
+                ) : (
+                  <IconButton
+                    aria-label="delete"
+                    size="large"
+                    color="error"
+                    onClick={() => changeItem(params.row.id, true)}
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                )}
+                <IconButton
+                  aria-label="edit"
+                  size="large"
+                  color="success"
+                  onClick={() => editDoctor(params.row.id)}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Stack>
+            ) : (
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <IconButton
+                  aria-label="edit"
+                  size="large"
+                  color="blue"
+                  onClick={() => checkAvailableTime(params.row.id)}
+                >
+                  <AccessTimeIcon />
+                </IconButton>
+              </Stack>
+            )}
           </>
         );
       },
@@ -438,7 +439,7 @@ export const DoctorListImpl = () => {
           bgcolor: "#FFF",
         }}
       >
-        {loading && loadingRecord ? (
+        {loading ? (
           <Box sx={{ width: "100%" }}>
             <LinearProgress />
           </Box>
@@ -485,7 +486,41 @@ export const DoctorListImpl = () => {
             {title}
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <pre>{content}</pre>
+            <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+              <FormControl
+                variant="standard"
+                sx={{ m: 1, mt: 3, width: "25ch" }}
+              >
+                <Input
+                  id="standard-adornment-weight"
+                  aria-describedby="standard-weight-helper-text"
+                  inputProps={{
+                    "aria-label": "time",
+                  }}
+                  onChange={(e) => {
+                    handleChangeData(e);
+                  }}
+                  type="time"
+                  name={timeFlag ? "startTime" : "endTime"}
+                  // defaultValue={newsData.content}
+                />
+                <FormHelperText id="standard-weight-helper-text">
+                  {time}
+                </FormHelperText>
+              </FormControl>
+            </Box>
+            <Button
+              type="submit"
+              variant="contained"
+              endIcon={<SendIcon />}
+              size="small"
+              color="primary"
+              onClick={(e) => {
+                setTimeSubmit(e);
+              }}
+            >
+              Add
+            </Button>
           </Typography>
         </Box>
       </Modal>

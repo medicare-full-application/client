@@ -43,6 +43,7 @@ export default function Login() {
   // let userError = useSelector((state) => state.user.error);
   let token = useSelector((state) => state.user.token);
   let userType = useSelector((state) => state.user.userType);
+  let currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
@@ -67,16 +68,24 @@ export default function Login() {
     const result = await login(dispatch, loginData);
     console.log(result);
     if (result) {
-      if (userType === "Doctor") {
-        navigate("/doctorDashboard");
-      } else if (userType === "Patient") {
-        navigate("/patientDashboard");
-      } else if (userType === "Pharmacist") {
-        navigate("/pharmacistDashboard");
-      } else if (userType === "Admin") {
-        navigate("/dashboard");
+      if (currentUser.userStatus) {
+        if (userType === "Doctor") {
+          navigate("/doctorDashboard");
+        } else if (userType === "Patient") {
+          navigate("/patientDashboard");
+        } else if (userType === "Pharmacist") {
+          navigate("/pharmacistDashboard");
+        } else if (userType === "Admin") {
+          navigate("/dashboard");
+        } else {
+          navigate("/");
+        }
       } else {
-        navigate("/");
+        Swal.fire({
+          icon: "error",
+          title: "User Blocked!",
+          text: "Contact Administrator.",
+        });
       }
     } else {
       Swal.fire({

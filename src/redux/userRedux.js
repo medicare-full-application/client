@@ -9,6 +9,7 @@ const userSlice = createSlice({
     otherUsers: null,
     adminUsers: null,
     doctorUsers: [],
+    pharmacistUsers: [],
     isFetching: false,
     authorities: [],
     token: null,
@@ -46,6 +47,7 @@ const userSlice = createSlice({
       state.monthlyIncome = null;
       state.totalIncome = null;
       state.doctorUsers = [];
+      state.pharmacistUsers = [];
     },
     removeAdminUsers: (state) => {
       state.adminUsers = null;
@@ -55,6 +57,9 @@ const userSlice = createSlice({
     },
     removeDoctorUsers: (state) => {
       state.doctorUsers = null;
+    },
+    removePharmacistUsers: (state) => {
+      state.pharmacistUsers = null;
     },
     currentUserSet: (state, action) => {
       state.currentUser = action.payload;
@@ -137,6 +142,19 @@ const userSlice = createSlice({
       state.error = true;
     },
 
+    addPharmacistUsersStart: (state) => {
+      state.isFetching = true;
+      state.error = false;
+    },
+    addPharmacistUsersSuccess: (state, action) => {
+      state.isFetching = false;
+      state.pharmacistUsers = action.payload;
+    },
+    addPharmacistUsersFailure: (state) => {
+      state.isFetching = false;
+      state.error = true;
+    },
+
     addMonthlyIncomeSuccess: (state, action) => {
       state.monthlyIncome = action.payload;
     },
@@ -187,6 +205,10 @@ export const {
   removeDoctorUsers,
   addDoctorUsersStart,
   addDoctorUsersSuccess,
-  addDoctorUsersFailure
+  addDoctorUsersFailure,
+  addPharmacistUsersStart,
+  addPharmacistUsersSuccess,
+  addPharmacistUsersFailure,
+  removePharmacistUsers
 } = userSlice.actions;
 export default userSlice.reducer;

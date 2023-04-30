@@ -178,7 +178,7 @@ export const SlideBarListItems = () => {
         id: "leftbar-listItem-10",
         listName: "All Pharmacist",
         icon: <BookmarksIcon />,
-        link: "/dashboard",
+        link: "/pharmacist",
         name: "dashboard",
       },
       {

@@ -24,6 +24,8 @@ import { NewsList } from "./pages/news/NewsList";
 import { NewsCreate } from "./pages/news/NewsCreate";
 import { NewsUpdate } from "./pages/news/NewsUpdate";
 import { DoctorList } from "./pages/userDashboards.js/doctor/doctorList/DoctorList";
+import { PharmacistList } from "./pages/userDashboards.js/pharmacist/pharmacistList/PharmacistList";
+import { ChildList } from "./pages/userDashboards.js/patient/childList/ChildList";
 
 function App() {
   const theme = createTheme({
@@ -78,10 +80,12 @@ function App() {
           {/* user */}
           <Route path="/patient" element={<PatientList />} />
           <Route path="/addChild" element={<AddChild />} />
+          <Route path="/patient/child/:id" element={<ChildList />} />
           <Route path="/createUser" element={<UserCreate />} />
           <Route path="/updateUser/:id" element={<UserUpdate />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/doctor" element={<DoctorList />} />
+          <Route path="/pharmacist" element={<PharmacistList />} />
 
           <Route path="/doctorProfile" element={<DoctorProfile />} />
           <Route path="/patientProfile" element={<DoctorProfile />} />

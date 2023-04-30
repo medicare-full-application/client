@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
 import {
   doctorRequestToPatient,
+  getPharmacistUsers,
   getUsers,
   patientRequestToDoctor,
   updateUser,
@@ -21,7 +22,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import CelebrationIcon from "@mui/icons-material/Celebration";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import LinearProgress from "@mui/material/LinearProgress";
-import { removeOtherUsers } from "../../../../redux/userRedux";
+import { removeOtherUsers, removePharmacistUsers } from "../../../../redux/userRedux";
 import { removeMedicalRecords } from "../../../../redux/medicalRecordRedux";
 import {
   getMedicalRecord,
@@ -44,7 +45,7 @@ const style = {
   p: 4,
 };
 
-export const PatientListImpl = () => {
+export const PharmacistListImpl = () => {
   const [loading, setLoading] = useState(true);
   const [loadingRecord, setLoadingRecord] = useState(true);
   const [trigger, setTrigger] = useState("s");
@@ -57,10 +58,7 @@ export const PatientListImpl = () => {
   //   state.user.otherUsers.filter((x) => x.childOrNot == false)
   // );
   // console.log(otherUsers);
-  const otherUsers = useSelector((state) => state.user.otherUsers);
-  const medicalRecords = useSelector(
-    (state) => state.medicalRecord.medicalRecords
-  );
+  const pharmacistUsers = useSelector((state) => state.user.pharmacistUsers);
   //   const [deleteTrigger, setDeleteTrigger] = React.useState("");
   const [open, setOpen] = React.useState(false);
 
@@ -74,8 +72,8 @@ export const PatientListImpl = () => {
 
   React.useEffect(() => {
     const getDataFromDB = async () => {
-      dispatch(removeOtherUsers());
-      const result = await getUsers("Patient", dispatch, token);
+      dispatch(removePharmacistUsers());
+      const result = await getPharmacistUsers(dispatch, token);
       if (result) {
         console.log("Get user data success");
         setTrigger(trigger + "s");
@@ -88,21 +86,6 @@ export const PatientListImpl = () => {
   }, [loading, requestTrigger]);
 
   React.useEffect(() => {
-    const getDataFromDB = async () => {
-      dispatch(removeMedicalRecords());
-      const result = await getMedicalRecord(dispatch, token);
-      if (result) {
-        console.log("Get user data success");
-        setTrigger(trigger + "s");
-        setLoadingRecord(false);
-      } else {
-        console.log("Get user data unsuccess");
-      }
-    };
-    getDataFromDB();
-  }, [loadingRecord, requestTrigger]);
-
-  React.useEffect(() => {
     const getNormalUserData = async () => {
       let rowData = [];
       let flag = false;
@@ -112,60 +95,49 @@ export const PatientListImpl = () => {
       let prescription = null;
       let pharmacyNote = null;
       let medicalRecordId = null;
-      otherUsers.map(async (item) => {
-        if (item.childOrNot == false) {
-          const isoDateString = item.dateOfBirth;
-          const dateOnlyString = isoDateString.substring(0, 10);
+      pharmacistUsers.map(async (item) => {
 
-          if (userType == "Doctor") {
-            item.requests.map((request) => {
-              if (request.doctorId === userId) {
-                flag = true;
-                doctorIDData = request.doctorId;
-                isRequest = request.isRequest;
-              }
-            });
-          }
+        //   const isoDateString = item.dateOfBirth;
+        //   const dateOnlyString = isoDateString.substring(0, 10);
 
-          if (userType == "Pharmacist") {
-            medicalRecords.map((medicalRecordData) => {
-              if (item._id == medicalRecordData.recordFor) {
-                prescription = medicalRecordData.prescription;
-                pharmacyNote = medicalRecordData.pharmacyNote;
-                medicalRecordId = medicalRecordData._id;
-                console.log(prescription);
-                console.log(typeof prescription);
-                console.log(typeof medicalRecordData.prescription);
-              }
-            });
-          }
+        //   if (userType == "Doctor") {
+        //     item.requests.map((request) => {
+        //       if (request.doctorId === userId) {
+        //         flag = true;
+        //         doctorIDData = request.doctorId;
+        //         isRequest = request.isRequest;
+        //       }
+        //     });
+        //   }
+
+        //   if (userType == "Pharmacist") {
+        //     medicalRecords.map((medicalRecordData) => {
+        //       if (item._id == medicalRecordData.recordFor) {
+        //         prescription = medicalRecordData.prescription;
+        //         pharmacyNote = medicalRecordData.pharmacyNote;
+        //         medicalRecordId = medicalRecordData._id;
+        //         console.log(prescription);
+        //         console.log(typeof prescription);
+        //         console.log(typeof medicalRecordData.prescription);
+        //       }
+        //     });
+        //   }
 
           await rowData.push({
             id: item._id,
-            col1: item.firstName,
-            col2: item.lastName,
-            col3: item.NIC,
-            col4: item.imageUrl,
-            col5: item.haveChildren,
-            col6: item.address,
-            col7: item.contactNo,
-            col8: item.email,
-            col9: item.userStatus,
-            col10: dateOnlyString,
-            flag: item.flag,
-            isRequest: isRequest,
-            prescriptionNote: prescription,
-            pharmacyNote: pharmacyNote,
-            medicalRecordId: medicalRecordId,
+            pharmacyName: item.pharmacyName,
+            email: item.email,
+            address: item.address,
+            pharmacyRegNo: item.pharmacyRegNo,
+            contactNo: item.contactNo,
+            userStatus: item.userStatus
           });
 
-          prescription = null;
-          pharmacyNote = null;
-          medicalRecordId = null;
-        }
+        //   prescription = null;
+        //   pharmacyNote = null;
+        //   medicalRecordId = null;
       });
       setRows(rowData);
-      console.log(rowData);
     };
     getNormalUserData();
   }, [trigger, requestTrigger]);
@@ -284,58 +256,6 @@ export const PatientListImpl = () => {
   };
   const handleClose = () => setOpen(false);
 
-  const addNewNote = async (medicalRecordId, pharmacyNote) => {
-    console.log(medicalRecordId);
-
-    if (medicalRecordId != null) {
-      const { value: text } = await Swal.fire({
-        input: "textarea",
-        inputLabel: "Pharmacy Note",
-        inputPlaceholder: "Type your message here......",
-        inputValue: pharmacyNote,
-        // inputValue: 'Type your message here...',
-        inputValidator: (value) => {
-          if (!value) {
-            return "Add New Note!";
-          }
-        },
-        // inputAttributes: {
-        //   'aria-label': 'Type your message here'
-        // },
-        showCancelButton: true,
-      });
-
-      if (text) {
-        const data = {
-          pharmacyNote: text,
-        };
-        const result = await updateMedicalRecord(
-          medicalRecordId,
-          data,
-          dispatch,
-          token
-        );
-        if (result) {
-          setRequestTrigger("Q");
-          Swal.fire("Updated!", "Your note successfully added.", "success");
-        } else {
-          Swal.fire(
-            "Update Unsuccess!",
-            "Your note added unsuccessfully..",
-            "warning"
-          );
-        }
-        // Swal.fire(text);
-      }
-    } else {
-      Swal.fire(
-        "Request Can't Sent!",
-        "This patient hasn't any medical record..",
-        "warning"
-      );
-    }
-  };
-
   const deleteItem = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -376,9 +296,9 @@ export const PatientListImpl = () => {
         const data = {
           userStatus: userStatus,
         };
-        const result = await updateUser(id, "Patient", data, dispatch, token);
+        const result = await updateUser(id, "Pharmacist", data, dispatch, token);
         if (result) {
-          setRequestTrigger(requestTrigger+"Q");
+          setRequestTrigger(requestTrigger + "Q");
           Swal.fire("Updated!", "Your note successfully added.", "success");
         } else {
           Swal.fire(
@@ -393,83 +313,36 @@ export const PatientListImpl = () => {
 
   const columns = [
     // { field: "id", headerName: "User Id", width: 300 },
-    { field: "col3", headerName: "NIC", width: 140 },
-    {
-      field: "col1",
-      headerName: "Full Name",
-      width: 250,
-      renderCell: (params) => {
-        return (
-          <div className="productListItem">
-            <img className="productListImg" src={params.row.col4} alt="" />
-            {params.row.col1 + " " + params.row.col2}
-          </div>
-        );
-      },
-    },
+    { field: "pharmacyRegNo", headerName: "Pharmacy Reg No", width: 180 },
+    { field: "pharmacyName", headerName: "Pharmacy Name", width: 180 },
+    // {
+    //   field: "col1",
+    //   headerName: "Full Name",
+    //   width: 250,
+    //   renderCell: (params) => {
+    //     return (
+    //       <div className="productListItem">
+    //         <img className="productListImg" src={params.row.col4} alt="" />
+    //         {params.row.col1 + " " + params.row.col2}
+    //       </div>
+    //     );
+    //   },
+    // },
 
-    { field: "col8", headerName: "Email", width: 220 },
-    { field: "col6", headerName: "Address", width: 220 },
-    { field: "col7", headerName: "Contact", width: 120 },
-    {
-      field: "col5",
-      headerName: "Have Children",
-      width: 120,
-      renderCell: (params) => {
-        return (
-          <>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              {params.row.col5}
-              {params.row.col5 ? (
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="success"
-                  onClick={() => changeItem(params.row.id)}
-                >
-                  <CheckIcon />
-                </IconButton>
-              ) : (
-                <IconButton
-                  aria-label="delete"
-                  size="large"
-                  color="error"
-                  // onClick={() => changeItem(params.row.id)}
-                >
-                  <ClearIcon />
-                </IconButton>
-              )}
-            </Stack>
-          </>
-        );
-      },
-    },
+    { field: "email", headerName: "Email", width: 220 },
+    { field: "address", headerName: "Address", width: 220 },
+    { field: "contactNo", headerName: "Contact", width: 120 },
 
-    {
-      field: "col10",
-      headerName: "Birthday",
-      width: 150,
-      renderCell: (params) => {
-        return (
-          <>
-            {/* params.row.isCancel */}
-            <Stack direction="row" alignItems="center" spacing={1}>
-              {params.row.col10}
-            </Stack>
-          </>
-        );
-      },
-    },
     {
       field: "action",
-      headerName: "Action",
+      headerName: "User Activation",
       width: 200,
       renderCell: (params) => {
         return (
           <>
             {userType == "Admin" && (
               <Stack direction="row" alignItems="center" spacing={1}>
-                {params.row.col9 ? (
+                {params.row.userStatus ? (
                   <IconButton
                     aria-label="edit"
                     size="large"
@@ -490,111 +363,6 @@ export const PatientListImpl = () => {
                 )}
               </Stack>
             )}
-            {/* {userType == "Doctor" || userType == "Admin" ? (
-              params.row.isRequest == "None" ? (
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    color="blue"
-                    onClick={() => sendRequestToPatient(params.row.id)}
-                    //   endIcon={<AddIcon />}
-                    // onClick={() => createMedicalRecord(params.row.id)}
-                  >
-                    Request
-                  </Button>
-                </Stack>
-              ) : params.row.isRequest == "Sent" ? (
-                userType == "Admin" ? (
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      color="third"
-                      onClick={() =>
-                        sendRequestToPatientAdmin(params.row.id, "Accept")
-                      }
-                    >
-                      Request Accept
-                    </Button>
-
-                    <Button
-                      variant="contained"
-                      size="small"
-                      color="third"
-                      onClick={() =>
-                        sendRequestToPatientAdmin(params.row.id, "Decline")
-                      }
-                    >
-                      Request Decline
-                    </Button>
-                  </Stack>
-                ) : (
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      color="third"
-                      //   endIcon={<AddIcon />}
-                    >
-                      Request Sent
-                    </Button>
-                  </Stack>
-                )
-              ) : params.row.isRequest == "Accept" ? (
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    color="secondary"
-                    //   endIcon={<AddIcon />}
-                    onClick={() => createMedicalRecord(params.row.id)}
-                  >
-                    Add a record
-                  </Button>
-                </Stack>
-              ) : params.row.isRequest == "Decline" ? (
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    color="danger"
-                    //   endIcon={<AddIcon />}
-                    onClick={() => sendRequestToPatient(params.row.id)}
-                  >
-                    Request Decline
-                  </Button>
-                </Stack>
-              ) : (
-                <></>
-              )
-            ) : (
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="brown"
-                  onClick={() =>
-                    handleOpen(params.row.id, params.row.prescriptionNote)
-                  }
-                >
-                  <VisibilityIcon />
-                </IconButton>
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="success"
-                  onClick={() =>
-                    addNewNote(
-                      params.row.medicalRecordId,
-                      params.row.pharmacyNote
-                    )
-                  }
-                >
-                  <EditIcon />
-                </IconButton>
-              </Stack>
-            )} */}
           </>
         );
       },
@@ -623,7 +391,7 @@ export const PatientListImpl = () => {
               alignItems="center"
             >
               <div>
-                <h2>Patients</h2>
+                <h2>Pharmacy Details</h2>
               </div>
               {/* <div>
               <Button

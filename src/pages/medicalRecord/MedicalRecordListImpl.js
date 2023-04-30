@@ -25,6 +25,8 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { getUsers } from "../../redux/userApiCalls";
 import { removeOtherUsers } from "../../redux/userRedux";
+import NoteIcon from "@mui/icons-material/Note";
+import Tooltip from '@mui/material/Tooltip';
 
 const style = {
   position: "absolute",
@@ -52,11 +54,13 @@ export const MedicalRecordListImpl = () => {
   );
 
   const [open, setOpen] = React.useState(false);
+  const [open1, setOpen1] = React.useState(false);
 
   //   const [deleteTrigger, setDeleteTrigger] = React.useState("");
   const [rows, setRows] = React.useState([]);
   const [title, setTitle] = React.useState(null);
   const [content, setContent] = React.useState(null);
+  const [pharmacyNote, setPharmacyNote] = React.useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -112,12 +116,7 @@ export const MedicalRecordListImpl = () => {
               col3: item.reportAdded,
               col4: item.medicalReport,
               col5: item.prescription,
-
-              col6: item.event_location,
-              col7: item.event_date,
-              col8: item.event_time,
-              col9: item.status,
-              col10: item.event_image,
+              pharmacyNote: item.pharmacyNote,
             });
           }
           // }
@@ -135,7 +134,7 @@ export const MedicalRecordListImpl = () => {
             let patientNIC = null;
 
             otherUsers.map((patientData) => {
-              if(item.recordFor == patientData._id){
+              if (item.recordFor == patientData._id) {
                 patientId = patientData._id;
                 patientFirstName = patientData.firstName;
                 patientLastName = patientData.lastName;
@@ -157,12 +156,6 @@ export const MedicalRecordListImpl = () => {
               patientLastName: patientLastName,
               patientImage: patientImage,
               patientNIC: patientNIC,
-
-              col6: item.event_location,
-              col7: item.event_date,
-              col8: item.event_time,
-              col9: item.status,
-              col10: item.event_image,
             });
           }
           // }
@@ -219,6 +212,11 @@ export const MedicalRecordListImpl = () => {
     console.log(id);
   };
   const handleClose = () => setOpen(false);
+  const handleOpen1 = (id, pharmacyNote) => {
+    setPharmacyNote(pharmacyNote);
+    setOpen1(true)
+  };
+  const handleClose1 = () => setOpen1(false);
 
   const addNewNote = async (medicalRecordId, pharmacyNote) => {
     console.log(medicalRecordId);
@@ -316,12 +314,17 @@ export const MedicalRecordListImpl = () => {
     },
     {
       field: "col3",
-      headerName: userType == "Doctor" ? "View Report" : "Add Note",
-      width: 130,
+      headerName:
+        userType == "Doctor"
+          ? "View Report"
+          : userType == "Patient"
+          ? "View Report and Note"
+          : "Add Note",
+      width: 180,
       renderCell: (params) => {
         return (
           <>
-            {userType == "Doctor" ? (
+            {userType == "Doctor" || userType == "Patient" ? (
               <Stack direction="row" alignItems="center" spacing={1}>
                 {params.row.col3 ? (
                   <IconButton
@@ -355,6 +358,22 @@ export const MedicalRecordListImpl = () => {
                 >
                   <EditIcon />
                 </IconButton>
+              </Stack>
+            )}
+            {userType == "Patient" && (
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Tooltip title="Pharmacy Note">
+                  <IconButton
+                    aria-label="edit"
+                    size="large"
+                    color="blue"
+                    onClick={() =>
+                      handleOpen1(params.row.id, params.row.pharmacyNote)
+                    }
+                  >
+                    <NoteIcon />
+                  </IconButton>
+                </Tooltip>
               </Stack>
             )}
           </>
@@ -424,7 +443,11 @@ export const MedicalRecordListImpl = () => {
               alignItems="center"
             >
               <div>
-                <h2>Medical Records</h2>
+                <h2>
+                  {userType == "Patient"
+                    ? "My Medical Records"
+                    : "Medical Records"}
+                </h2>
               </div>
               {/* <div>
                 <Button
@@ -459,6 +482,23 @@ export const MedicalRecordListImpl = () => {
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <pre>{content}</pre>
+          </Typography>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={open1}
+        onClose={handleClose1}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        keepMounted
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Pharmacy Note Added by Pharmacy
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            <pre>{pharmacyNote ? pharmacyNote : "The pharmacy did not add a note."}</pre>
           </Typography>
         </Box>
       </Modal>

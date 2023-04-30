@@ -22,7 +22,10 @@ import {
   updateOtherUserSuccess,
   addDoctorUsersStart,
   addDoctorUsersSuccess,
-  addDoctorUsersFailure
+  addDoctorUsersFailure,
+  addPharmacistUsersStart,
+  addPharmacistUsersSuccess,
+  addPharmacistUsersFailure
 } from "./userRedux";
 import { publicRequest, userRequest } from "../requestMethods";
 import Swal from "sweetalert2";
@@ -148,6 +151,23 @@ export const getDoctorUsers = async (dispatch, token) => {
   }
 };
 
+export const getPharmacistUsers = async (dispatch, token) => {
+  dispatch(addPharmacistUsersStart());
+  try {
+    const res = await publicRequest.get(`/user/Pharmacist`, {
+      headers: {
+        token: `Bearer ${token}`,
+      },
+    });
+    console.log(res);
+    dispatch(addPharmacistUsersSuccess(res.data));
+    return 1;
+  } catch (err) {
+    dispatch(addPharmacistUsersFailure());
+    return 0;
+  }
+};
+
 export const deleteUser = async (id, userType, dispatch, token) => {
   dispatch(deleteUserStart());
   try {
@@ -176,7 +196,7 @@ export const updateUser = async (id, userType, User, dispatch, token) => {
       },
     });
     console.log(res);
-    dispatch(updateUserSuccess(res.data));
+    // dispatch(updateUserSuccess(res.data));
     return 1;
   } catch (err) {
     dispatch(updateUserFailure());

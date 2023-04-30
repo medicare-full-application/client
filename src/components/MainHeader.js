@@ -75,15 +75,20 @@ export default function MainHeader(props) {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
-        <AppBar component="nav" sx={{ backgroundColor: "#fff" }}>
+        <AppBar component="nav" sx={{ backgroundColor: "#8ed4b4" }}>
           <Toolbar style={{ position: "relative" }}>
             <IconButton
               aria-label="open drawer"
               edge="start"
               onClick={handleDrawerToggle}
+              sx={{color: "#000"}}
               //   sx={{ mr: 2, display: { sm: "none" }, color: "#000" }}
             >
               <MenuIcon />
+            </IconButton>
+            <IconButton onClick={changeProfile}>
+              <img src="https://res.cloudinary.com/midefulness/image/upload/v1682622260/medicare/Logo_2_taiafd.png" alt="logo" style={{height:"32px"}} />
+              {/* <Avatar alt="Profile Picture" src={user.imageUrl} /> */}
             </IconButton>
             <Typography
               variant="h6"

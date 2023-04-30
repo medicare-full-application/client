@@ -10,7 +10,7 @@ import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { logOutUser } from "../redux/userApiCalls";
-import { removePermissions } from "../redux/permissionRedux";
+import Tooltip from "@mui/material/Tooltip";
 
 export default function MainHeaderMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -33,7 +33,6 @@ export default function MainHeaderMenu() {
     }).then((result) => {
       if (result.isConfirmed) {
         logOutUser(dispatch);
-        dispatch(removePermissions());
         navigate("/");
       }
     });
@@ -45,15 +44,18 @@ export default function MainHeaderMenu() {
 
   return (
     <div>
-      <IconButton
-        id="fade-button"
-        aria-controls={open ? "fade-menu" : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-        onClick={handleClick}
-      >
-        <SettingsIcon />
-      </IconButton>
+      <Tooltip title="Log Out">
+        <IconButton
+          id="fade-button"
+          aria-controls={open ? "fade-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          onClick={handleClick}
+          sx={{ color: "#000" }}
+        >
+          <SettingsIcon />
+        </IconButton>
+      </Tooltip>
       <Menu
         id="fade-menu"
         MenuListProps={{
