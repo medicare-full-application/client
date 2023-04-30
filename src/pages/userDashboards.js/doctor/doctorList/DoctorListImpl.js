@@ -26,11 +26,6 @@ import {
   removeDoctorUsers,
   removeOtherUsers,
 } from "../../../../redux/userRedux";
-import { removeMedicalRecords } from "../../../../redux/medicalRecordRedux";
-import {
-  getMedicalRecord,
-  updateMedicalRecord,
-} from "../../../../redux/medicalRecordApiCalls";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -56,12 +51,14 @@ const style = {
 
 export const DoctorListImpl = () => {
   const [loading, setLoading] = useState(true);
+  const [loading1, setLoading1] = useState(true);
   const [trigger, setTrigger] = useState("s");
   const [requestTrigger, setRequestTrigger] = useState("s");
   const token = useSelector((state) => state.user.token);
   const userId = useSelector((state) => state.user.currentUser._id);
   const userType = useSelector((state) => state.user.userType);
   const doctorUsers = useSelector((state) => state.user.doctorUsers);
+  const otherUsers = useSelector((state) => state.user.otherUsers);
 
   const [open, setOpen] = React.useState(false);
 
@@ -92,11 +89,36 @@ export const DoctorListImpl = () => {
   }, [loading, requestTrigger]);
 
   React.useEffect(() => {
+    const getDataFromDB = async () => {
+      dispatch(removeOtherUsers());
+      const result = await getUsers("Patient", dispatch, token);
+      if (result) {
+        console.log("Get user data success");
+        setTrigger(trigger + "s");
+        setLoading1(false);
+      } else {
+        console.log("Get user data unsuccess");
+      }
+    };
+    getDataFromDB();
+  }, [loading, requestTrigger]);
+
+  React.useEffect(() => {
     const getNormalUserData = async () => {
       let rowData = [];
+      
       doctorUsers.map(async (item) => {
+        let isRequest = "None";
         const isoDateString = item.dateOfBirth;
         const dateOnlyString = isoDateString.substring(0, 10);
+
+        if (userType == "Patient") {
+          item.requests.map((request) => {
+            if (request.patientId === userId) {
+              isRequest = request.isRequest;
+            }
+          });
+        }
 
         await rowData.push({
           id: item._id,
@@ -112,7 +134,10 @@ export const DoctorListImpl = () => {
           col10: dateOnlyString,
           startTime: item.startTime,
           endTime: item.endTime,
+          isRequest: isRequest,
         });
+
+        isRequest = "None";
       });
       setRows(rowData);
       console.log(rowData);
@@ -285,6 +310,53 @@ export const DoctorListImpl = () => {
     });
   };
 
+  const sendRequestToPatientAdmin = (id, requestType) => {
+    const data = {
+      patientId: userId,
+      isRequest: requestType,
+    };
+
+    const patientData = {
+      doctorId: id,
+      isRequest: requestType,
+    };
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#378cbb",
+      cancelButtonColor: "#d33",
+      confirmButtonText: `Yes, ${requestType} Request!`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const doctorRequestStatus = await doctorRequestToPatient(
+          id,
+          data,
+          dispatch,
+          token
+        );
+        const patientRequestStatus = await patientRequestToDoctor(
+          userId,
+          patientData,
+          dispatch,
+          token
+        );
+        if (doctorRequestStatus && patientRequestStatus) {
+          setRequestTrigger(trigger + "s");
+          Swal.fire("Request Sent!", "Request sent success.", "success");
+        } else {
+          Swal.fire(
+            "Request Can't Sent!",
+            "Request sent unsuccess.",
+            "warning"
+          );
+        }
+      }
+    });
+  };
+
   const columns = [
     // { field: "id", headerName: "User Id", width: 300 },
     { field: "col3", headerName: "NIC", width: 140 },
@@ -378,7 +450,7 @@ export const DoctorListImpl = () => {
     },
     {
       field: "action",
-      headerName: userType == "Admin" ? "User Activation" : "Available Time",
+      headerName: userType == "Admin" ? "User Activation" : "Action",
       width: 200,
       renderCell: (params) => {
         return (
@@ -414,16 +486,75 @@ export const DoctorListImpl = () => {
                 </IconButton>
               </Stack>
             ) : (
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="blue"
-                  onClick={() => checkAvailableTime(params.row.id)}
-                >
-                  <AccessTimeIcon />
-                </IconButton>
-              </Stack>
+              <>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <IconButton
+                    aria-label="edit"
+                    size="large"
+                    color="blue"
+                    onClick={() => checkAvailableTime(params.row.id)}
+                  >
+                    <AccessTimeIcon />
+                  </IconButton>
+                </Stack>
+                {params.row.isRequest == "None" ? (
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <Button variant="contained" size="small" color="blue">
+                      None
+                    </Button>
+                  </Stack>
+                ) : params.row.isRequest == "Sent" ? (
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      color="third"
+                      onClick={() =>
+                        sendRequestToPatientAdmin(params.row.id, "Accept")
+                      }
+                    >
+                      Accept the Request 
+                    </Button>
+
+                    <Button
+                      variant="contained"
+                      size="small"
+                      color="third"
+                      onClick={() =>
+                        sendRequestToPatientAdmin(params.row.id, "Decline")
+                      }
+                    >
+                      Decline the Request
+                    </Button>
+                  </Stack>
+                ) : params.row.isRequest == "Accept" ? (
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      color="secondary"
+                      //   endIcon={<AddIcon />}
+                      // onClick={() => createMedicalRecord(params.row.id)}
+                    >
+                      Already Accept
+                    </Button>
+                  </Stack>
+                ) : params.row.isRequest == "Decline" ? (
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      color="danger"
+                      //   endIcon={<AddIcon />}
+                      // onClick={() => sendRequestToPatient(params.row.id)}
+                    >
+                      Request Already Decline
+                    </Button>
+                  </Stack>
+                ) : (
+                  <></>
+                )}
+              </>
             )}
           </>
         );
@@ -439,7 +570,7 @@ export const DoctorListImpl = () => {
           bgcolor: "#FFF",
         }}
       >
-        {loading ? (
+        {loading && loading1 ? (
           <Box sx={{ width: "100%" }}>
             <LinearProgress />
           </Box>

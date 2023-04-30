@@ -25,12 +25,10 @@ export const MedicalRecordCreateImpl = () => {
 
   const [event_nameError, setevent_nameError] = useState(false);
   const [doctorFeeError, setDoctorFeeError] = useState(false);
-  const [medicineFeeError, setMedicineFeeError] = useState(false);
   const [descriptionError, setdescriptionError] = useState(false);
 
   const [event_nameMessageError, setevent_nameMessageError] = useState("");
   const [doctorFeeMessageError, setDoctorFeeMessageError] = useState("");
-  const [medicineFeeMessageError, setMedicineFeeMessageError] = useState("");
   const [descriptionMessageError, setdescriptionMessageError] = useState("");
 
   const patientId = window.location.pathname.split("/")[2];
@@ -54,7 +52,6 @@ export const MedicalRecordCreateImpl = () => {
       medicalCondition: data.get("medicalCondition"),
       prescription: data.get("prescription"),
       doctorFee: data.get("doctorFee"),
-      medicineFee: data.get("medicineFee"),
       user_id: userId,
     };
 
@@ -67,9 +64,6 @@ export const MedicalRecordCreateImpl = () => {
     } else if (!data.get("doctorFee")) {
       setdescriptionError(true);
       setdescriptionMessageError("Doctor fee can't be empty!");
-    }else if (!data.get("medicineFee")) {
-      setdescriptionError(true);
-      setdescriptionMessageError("Medicine fee can't be empty!");
     }else {
       const data = {
         patientId: patientId,
@@ -266,31 +260,6 @@ export const MedicalRecordCreateImpl = () => {
                   onClick={(e) => {
                     setDoctorFeeError(false);
                     setDoctorFeeMessageError("");
-                    setInputs((prev) => {
-                      return { ...prev, [e.target.name]: e.target.value };
-                    });
-                  }}
-                />
-              </Grid>
-              <Grid item md={sizeForm}>
-                <TextField
-                  error={medicineFeeError}
-                  // defaultValue={employeeNo}
-                  // variant="standard"
-                  // disabled
-                  type="number"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="medicineFee"
-                  label="Medicine Fee(Rs.)"
-                  name="medicineFee"
-                  autoComplete="medicineFee"
-                  autoFocus
-                  helperText={medicineFeeMessageError}
-                  onClick={(e) => {
-                    setMedicineFeeError(false);
-                    setMedicineFeeMessageError("");
                     setInputs((prev) => {
                       return { ...prev, [e.target.name]: e.target.value };
                     });

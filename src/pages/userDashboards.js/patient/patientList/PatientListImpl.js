@@ -490,7 +490,7 @@ export const PatientListImpl = () => {
                 )}
               </Stack>
             )}
-            {/* {userType == "Doctor" || userType == "Admin" ? (
+            {userType == "Doctor" || userType == "Admin" ? (
               params.row.isRequest == "None" ? (
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <Button
@@ -594,7 +594,7 @@ export const PatientListImpl = () => {
                   <EditIcon />
                 </IconButton>
               </Stack>
-            )} */}
+            )}
           </>
         );
       },
