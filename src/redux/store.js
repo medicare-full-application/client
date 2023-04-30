@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import userReducer from "./userRedux";
 import medicalRecordReducer from "./medicalRecordRedux";
 import newsReducer from "./newsRedux";
+import randomReducer from "./randomRedux";
 
 import {
   persistStore,
@@ -24,7 +25,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
   user: userReducer,
   medicalRecord: medicalRecordReducer,
-  news: newsReducer
+  news: newsReducer,
+  random: randomReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -26,6 +26,9 @@ import { NewsUpdate } from "./pages/news/NewsUpdate";
 import { DoctorList } from "./pages/userDashboards.js/doctor/doctorList/DoctorList";
 import { PharmacistList } from "./pages/userDashboards.js/pharmacist/pharmacistList/PharmacistList";
 import { ChildList } from "./pages/userDashboards.js/patient/childList/ChildList";
+import ForgetPassword from "./pages/forgetPassword.js/ForgetPassword";
+import ValidationPage from "./pages/forgetPassword.js/ValidationPage";
+import UpdatePassword from "./pages/forgetPassword.js/UpdatePassword";
 
 function App() {
   const theme = createTheme({
@@ -73,6 +76,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/signUp" element={<SignUp />} />
+          <Route path="/forgetPassword" element={<ForgetPassword />} />
+          <Route path="/validation" element={<ValidationPage />} />
+          <Route path="/updatePassword/:id" element={<UpdatePassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/doctorDashboard" element={<DoctorDashboard />} />
           <Route path="/patientDashboard" element={<PatientDashboard />} />

@@ -110,7 +110,7 @@ export const login = async (dispatch, data) => {
     const res = await publicRequest.post("/auth/login", data);
     console.log(res);
     dispatch(loginSuccess(res.data));
-    return 1;
+    return res.data;
   } catch (err) {
     dispatch(loginFailure());
     return 0;
@@ -234,13 +234,28 @@ export const updateUserEmail = async (
   }
 };
 
-export const updateUserPassword = async (loginId, User, dispatch, token) => {
+export const checkUserEmail = async (User, dispatch) => {
+  // dispatch(updateUserStart());
+  try {
+    const res = await publicRequest.post(`/user/email`, User, {
+      headers: {
+        "Content-Type": "application/json"
+      },
+    });
+    console.log(res.data);
+    return res;
+  } catch (err) {
+    // dispatch(updateUserFailure());
+    return 0;
+  }
+};
+
+export const updateUserPassword = async (loginId, User, dispatch) => {
   dispatch(updateUserStart());
   try {
     const res = await publicRequest.put(`/user/password/${loginId}`, User, {
       headers: {
-        "Content-Type": "application/json",
-        token: `Bearer ${token}`,
+        "Content-Type": "application/json"
       },
     });
     console.log(res);

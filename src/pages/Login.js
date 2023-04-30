@@ -68,16 +68,17 @@ export default function Login() {
     const result = await login(dispatch, loginData);
     console.log(result);
     if (result) {
-      if (currentUser.userStatus) {
-        if (userType === "Doctor") {
+      if (result.userData.userStatus) {
+        if (result.login.userType === "Doctor") {
           navigate("/doctorDashboard");
-        } else if (userType === "Patient") {
+        } else if (result.login.userType === "Patient") {
           navigate("/patientDashboard");
-        } else if (userType === "Pharmacist") {
+        } else if (result.login.userType === "Pharmacist") {
           navigate("/pharmacistDashboard");
-        } else if (userType === "Admin") {
+        } else if (result.login.userType === "Admin") {
           navigate("/dashboard");
         } else {
+          console.log("Login fail!");
           navigate("/");
         }
       } else {
@@ -174,7 +175,7 @@ export default function Login() {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="/forgetPassword" variant="body2">
                     Forgot password?
                   </Link>
                 </Grid>
