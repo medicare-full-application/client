@@ -9,6 +9,7 @@ import {
   getMonthlyIncomeFromDoctor,
   getTotalIncomeFromDoctor,
 } from "../../../redux/userApiCalls";
+import MainFeaturedPost from "../patient/patientList/MainFeaturedPost";
 
 export const DoctorDashboardImpl = () => {
   const [userStats, setUserStats] = useState([]);
@@ -22,6 +23,7 @@ export const DoctorDashboardImpl = () => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
   const userId = useSelector((state) => state.user.currentUser._id);
+  const currentUser = useSelector((state) => state.user.currentUser);
   const medicalRegNo = useSelector(
     (state) => state.user.currentUser.medicalRegNo
   );
@@ -48,6 +50,16 @@ export const DoctorDashboardImpl = () => {
     ],
     []
   );
+
+  const mainFeaturedPost = {
+    title: "Hiii...Dr." + currentUser.firstName + " " + currentUser.lastName,
+    description:
+      "Good communication is key to building trust and rapport with your patients, and can help them better understand their health conditions and treatment options.",
+    image:
+      "https://res.cloudinary.com/midefulness/image/upload/v1682925281/medicare/5207289_wt4vcp.jpg",
+    imageText: "main image description",
+    // linkText: "Continue reading…",
+  };
 
   useEffect(() => {
     const getCountInventoryData = async () => {
@@ -152,6 +164,8 @@ export const DoctorDashboardImpl = () => {
       ) : (
         <FeaturedInfo data={featureData} />
       )} */}
+
+      <MainFeaturedPost post={mainFeaturedPost} />
 
       <FeaturedInfo data={featureData} />
 

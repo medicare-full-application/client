@@ -18,7 +18,8 @@ function MainFeaturedPost(props) {
         mb: 4,
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
+        // backgroundPosition: 'center',
+        backgroundPosition: '0% 25%',
         backgroundImage: `url(${post.image})`,
       }}
     >

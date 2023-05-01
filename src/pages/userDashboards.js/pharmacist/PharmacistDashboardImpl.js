@@ -5,7 +5,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import FeaturedInfo from "../../../components/featuredInfo/FeaturedInfo";
 import Charts from "../../../components/charts/Charts";
-import './Pharmacist.css';
+import "./Pharmacist.css";
+import MainFeaturedPost from "../patient/patientList/MainFeaturedPost";
 
 export const PharmacistDashboardImpl = () => {
   const [userStats, setUserStats] = useState([]);
@@ -17,8 +18,11 @@ export const PharmacistDashboardImpl = () => {
   const [loading3, setLoading3] = useState(true);
   const [featuredData, setFeaturedData] = useState([]);
   const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.user.currentUser);
   const token = useSelector((state) => state.user.token);
-  const pharmacyRegNo = useSelector((state) => state.user.currentUser.pharmacyRegNo);
+  const pharmacyRegNo = useSelector(
+    (state) => state.user.currentUser.pharmacyRegNo
+  );
   // const otherUsers = useSelector((state) => state.user.otherUsers);
   // const adminUsers = useSelector((state) => state.user.adminUsers);
   // const events = useSelector((state) => state.event.events);
@@ -88,9 +92,8 @@ export const PharmacistDashboardImpl = () => {
   let featureData = [
     {
       index: 1,
-      title: "Monthly Income",
-      // number: other,
-      number: 15,
+      title: "Pharmacy Address",
+      number: currentUser.address,
       // percentage: -1.4,
       isDowngrade: false,
       // text: "Compared to last month",
@@ -106,14 +109,23 @@ export const PharmacistDashboardImpl = () => {
     },
     {
       index: 3,
-      title: "Total Income",
-      // number: admin,
-      number: 89,
+      title: "Pharmacy Contact No.",
+      number: currentUser.contactNo,
       // percentage: -1.4,
       isDowngrade: false,
       // text: "Compared to last month",
     },
   ];
+
+  const mainFeaturedPost = {
+    title: "Hiii..." + currentUser.pharmacyName + "!!",
+    description:
+      "Implement processes to ensure that medications are stored, dispensed, and labeled correctly, and that patients are educated on proper usage and potential side effects.",
+    image:
+      "https://res.cloudinary.com/midefulness/image/upload/v1682925280/medicare/2457279_ojgakb.jpg",
+    imageText: "main image description",
+    // linkText: "Continue reading…",
+  };
 
   useEffect(() => {
     let data = [
@@ -138,6 +150,8 @@ export const PharmacistDashboardImpl = () => {
       ) : (
         <FeaturedInfo data={featureData} />
       )} */}
+
+      <MainFeaturedPost post={mainFeaturedPost} />
 
       <FeaturedInfo data={featureData} />
 

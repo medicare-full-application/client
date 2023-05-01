@@ -7,6 +7,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import { removeMedicalRecords } from "../redux/medicalRecordRedux";
 import { getMedicalRecord } from "../redux/medicalRecordApiCalls";
+import MainFeaturedPost from "./userDashboards.js/patient/patientList/MainFeaturedPost";
 
 export const DashboardImpl = () => {
   const [userStats, setUserStats] = useState([]);
@@ -143,6 +144,16 @@ export const DashboardImpl = () => {
     // setFeaturedData(featureData);
   }, []);
 
+  const mainFeaturedPost = {
+    title: "Hiii...Admin!",
+    description:
+      " Keep accurate and up-to-date records of all patient information, including medical histories, medications, and treatment plans.",
+    image:
+      "https://res.cloudinary.com/midefulness/image/upload/v1682925280/medicare/5138237_cxwnoe.jpg",
+    imageText: "main image description",
+    // linkText: "Continue reading…",
+  };
+
   return (
     <div>
       {/* {loading1 && loading2 && loading3 ? (
@@ -153,7 +164,9 @@ export const DashboardImpl = () => {
         <FeaturedInfo data={featureData} />
       )} */}
 
-      <FeaturedInfo data={featureData} />
+      <MainFeaturedPost post={mainFeaturedPost} />
+
+      {/* <FeaturedInfo data={featureData} /> */}
 
       <Charts
         data={userStats}

@@ -30,6 +30,7 @@ import {
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import Tooltip from "@mui/material/Tooltip";
 
 const style = {
   position: "absolute",
@@ -378,7 +379,7 @@ export const PatientListImpl = () => {
         };
         const result = await updateUser(id, "Patient", data, dispatch, token);
         if (result) {
-          setRequestTrigger(requestTrigger+"Q");
+          setRequestTrigger(requestTrigger + "Q");
           Swal.fire("Updated!", "Your note successfully added.", "success");
         } else {
           Swal.fire(
@@ -463,34 +464,38 @@ export const PatientListImpl = () => {
     {
       field: "action",
       headerName: "Action",
-      width: 200,
+      width: 350,
       renderCell: (params) => {
         return (
           <>
             {userType == "Admin" && (
               <Stack direction="row" alignItems="center" spacing={1}>
                 {params.row.col9 ? (
-                  <IconButton
-                    aria-label="edit"
-                    size="large"
-                    color="success"
-                    onClick={() => changeItemAdmin(params.row.id, false)}
-                  >
-                    <CheckIcon />
-                  </IconButton>
+                  <Tooltip title="User Activation">
+                    <IconButton
+                      aria-label="edit"
+                      size="large"
+                      color="success"
+                      onClick={() => changeItemAdmin(params.row.id, false)}
+                    >
+                      <CheckIcon />
+                    </IconButton>
+                  </Tooltip>
                 ) : (
-                  <IconButton
-                    aria-label="delete"
-                    size="large"
-                    color="error"
-                    onClick={() => changeItemAdmin(params.row.id, true)}
-                  >
-                    <ClearIcon />
-                  </IconButton>
+                  <Tooltip title="User Activation">
+                    <IconButton
+                      aria-label="delete"
+                      size="large"
+                      color="error"
+                      onClick={() => changeItemAdmin(params.row.id, true)}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </Tooltip>
                 )}
               </Stack>
             )}
-            {userType == "Doctor" || userType == "Admin" ? (
+            {userType == "Doctor" ? (
               params.row.isRequest == "None" ? (
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <Button
@@ -569,31 +574,33 @@ export const PatientListImpl = () => {
                 <></>
               )
             ) : (
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="brown"
-                  onClick={() =>
-                    handleOpen(params.row.id, params.row.prescriptionNote)
-                  }
-                >
-                  <VisibilityIcon />
-                </IconButton>
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="success"
-                  onClick={() =>
-                    addNewNote(
-                      params.row.medicalRecordId,
-                      params.row.pharmacyNote
-                    )
-                  }
-                >
-                  <EditIcon />
-                </IconButton>
-              </Stack>
+              userType != "Admin" && (
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <IconButton
+                    aria-label="edit"
+                    size="large"
+                    color="brown"
+                    onClick={() =>
+                      handleOpen(params.row.id, params.row.prescriptionNote)
+                    }
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
+                  <IconButton
+                    aria-label="edit"
+                    size="large"
+                    color="success"
+                    onClick={() =>
+                      addNewNote(
+                        params.row.medicalRecordId,
+                        params.row.pharmacyNote
+                      )
+                    }
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </Stack>
+              )
             )}
           </>
         );

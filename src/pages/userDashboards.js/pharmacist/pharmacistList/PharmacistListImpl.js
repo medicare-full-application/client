@@ -22,7 +22,10 @@ import ClearIcon from "@mui/icons-material/Clear";
 import CelebrationIcon from "@mui/icons-material/Celebration";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import LinearProgress from "@mui/material/LinearProgress";
-import { removeOtherUsers, removePharmacistUsers } from "../../../../redux/userRedux";
+import {
+  removeOtherUsers,
+  removePharmacistUsers,
+} from "../../../../redux/userRedux";
 import { removeMedicalRecords } from "../../../../redux/medicalRecordRedux";
 import {
   getMedicalRecord,
@@ -31,6 +34,7 @@ import {
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import Tooltip from "@mui/material/Tooltip";
 
 const style = {
   position: "absolute",
@@ -96,7 +100,6 @@ export const PharmacistListImpl = () => {
       let pharmacyNote = null;
       let medicalRecordId = null;
       pharmacistUsers.map(async (item) => {
-
         //   const isoDateString = item.dateOfBirth;
         //   const dateOnlyString = isoDateString.substring(0, 10);
 
@@ -123,15 +126,15 @@ export const PharmacistListImpl = () => {
         //     });
         //   }
 
-          await rowData.push({
-            id: item._id,
-            pharmacyName: item.pharmacyName,
-            email: item.email,
-            address: item.address,
-            pharmacyRegNo: item.pharmacyRegNo,
-            contactNo: item.contactNo,
-            userStatus: item.userStatus
-          });
+        await rowData.push({
+          id: item._id,
+          pharmacyName: item.pharmacyName,
+          email: item.email,
+          address: item.address,
+          pharmacyRegNo: item.pharmacyRegNo,
+          contactNo: item.contactNo,
+          userStatus: item.userStatus,
+        });
 
         //   prescription = null;
         //   pharmacyNote = null;
@@ -296,7 +299,13 @@ export const PharmacistListImpl = () => {
         const data = {
           userStatus: userStatus,
         };
-        const result = await updateUser(id, "Pharmacist", data, dispatch, token);
+        const result = await updateUser(
+          id,
+          "Pharmacist",
+          data,
+          dispatch,
+          token
+        );
         if (result) {
           setRequestTrigger(requestTrigger + "Q");
           Swal.fire("Updated!", "Your note successfully added.", "success");
@@ -343,23 +352,27 @@ export const PharmacistListImpl = () => {
             {userType == "Admin" && (
               <Stack direction="row" alignItems="center" spacing={1}>
                 {params.row.userStatus ? (
-                  <IconButton
-                    aria-label="edit"
-                    size="large"
-                    color="success"
-                    onClick={() => changeItemAdmin(params.row.id, false)}
-                  >
-                    <CheckIcon />
-                  </IconButton>
+                  <Tooltip title="User Activation">
+                    <IconButton
+                      aria-label="edit"
+                      size="large"
+                      color="success"
+                      onClick={() => changeItemAdmin(params.row.id, false)}
+                    >
+                      <CheckIcon />
+                    </IconButton>
+                  </Tooltip>
                 ) : (
-                  <IconButton
-                    aria-label="delete"
-                    size="large"
-                    color="error"
-                    onClick={() => changeItemAdmin(params.row.id, true)}
-                  >
-                    <ClearIcon />
-                  </IconButton>
+                  <Tooltip title="User Activation">
+                    <IconButton
+                      aria-label="delete"
+                      size="large"
+                      color="error"
+                      onClick={() => changeItemAdmin(params.row.id, true)}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </Tooltip>
                 )}
               </Stack>
             )}

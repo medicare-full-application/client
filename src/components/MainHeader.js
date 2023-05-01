@@ -13,7 +13,7 @@ import {
   createTheme,
   ThemeProvider,
 } from "@mui/material";
-
+import Tooltip from "@mui/material/Tooltip";
 import SlideBar from "./SlideBar";
 import MainHeaderMenu from "./MainHeaderMenu";
 import NotificationMenu from "./NotificationMenu";
@@ -81,13 +81,17 @@ export default function MainHeader(props) {
               aria-label="open drawer"
               edge="start"
               onClick={handleDrawerToggle}
-              sx={{color: "#000"}}
+              sx={{ color: "#000" }}
               //   sx={{ mr: 2, display: { sm: "none" }, color: "#000" }}
             >
               <MenuIcon />
             </IconButton>
             <IconButton onClick={changeProfile}>
-              <img src="https://res.cloudinary.com/midefulness/image/upload/v1682622260/medicare/Logo_2_taiafd.png" alt="logo" style={{height:"32px"}} />
+              <img
+                src="https://res.cloudinary.com/midefulness/image/upload/v1682622260/medicare/Logo_2_taiafd.png"
+                alt="logo"
+                style={{ height: "32px" }}
+              />
               {/* <Avatar alt="Profile Picture" src={user.imageUrl} /> */}
             </IconButton>
             <Typography
@@ -101,10 +105,14 @@ export default function MainHeader(props) {
             >
               <MainTab value={tabValue} />
             </Box> */}
-            <IconButton onClick={changeProfile}>
-              {/* <IconButton> */}
-              <Avatar alt="Profile Picture" src={user.imageUrl} />
-            </IconButton>
+            {userType != "Admin" && (
+              <Tooltip title="Profile">
+                <IconButton onClick={changeProfile}>
+                  {/* <IconButton> */}
+                  <Avatar alt="Profile Picture" src={user.imageUrl} />
+                </IconButton>
+              </Tooltip>
+            )}
             {/* <NotificationMenu /> */}
             <MainHeaderMenu />
           </Toolbar>
