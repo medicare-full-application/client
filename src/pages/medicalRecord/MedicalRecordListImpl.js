@@ -23,10 +23,10 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { removeMedicalRecords } from "../../redux/medicalRecordRedux";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { getUsers } from "../../redux/userApiCalls";
-import { removeOtherUsers } from "../../redux/userRedux";
+import { getDoctorUsers, getUsers } from "../../redux/userApiCalls";
+import { removeDoctorUsers, removeOtherUsers } from "../../redux/userRedux";
 import NoteIcon from "@mui/icons-material/Note";
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from "@mui/material/Tooltip";
 
 const style = {
   position: "absolute",
@@ -43,12 +43,15 @@ const style = {
 
 export const MedicalRecordListImpl = () => {
   const [loading, setLoading] = useState(true);
+  const [loading1, setLoading1] = useState(true);
+  const [loading2, setLoading2] = useState(true);
   const [trigger, setTrigger] = useState("s");
   const [deleteTrigger, setDeleteTrigger] = useState("s");
   const token = useSelector((state) => state.user.token);
   const userType = useSelector((state) => state.user.userType);
   const userId = useSelector((state) => state.user.currentUser._id);
   const otherUsers = useSelector((state) => state.user.otherUsers);
+  const doctorUsers = useSelector((state) => state.user.doctorUsers);
   const medicalRecords = useSelector(
     (state) => state.medicalRecord.medicalRecords
   );
@@ -87,13 +90,28 @@ export const MedicalRecordListImpl = () => {
       if (result) {
         console.log("Get user data success");
         setTrigger(trigger + "s");
-        setLoading(false);
+        setLoading1(false);
       } else {
         console.log("Get user data unsuccess");
       }
     };
     getDataFromDB();
-  }, [loading, deleteTrigger]);
+  }, [loading1, deleteTrigger]);
+
+  React.useEffect(() => {
+    const getDataFromDB = async () => {
+      dispatch(removeDoctorUsers());
+      const result = await getDoctorUsers(dispatch, token);
+      if (result) {
+        console.log("Get user data success");
+        setTrigger(trigger + "s");
+        setLoading2(false);
+      } else {
+        console.log("Get user data unsuccess");
+      }
+    };
+    getDataFromDB();
+  }, [loading2, deleteTrigger]);
 
   React.useEffect(() => {
     const getNormalUserData = async () => {
@@ -109,6 +127,23 @@ export const MedicalRecordListImpl = () => {
           (item) => {
             const isoDateString = item.date;
             const dateOnlyString = isoDateString.substring(0, 10);
+
+            let doctorId = null;
+            let doctorFirstName = null;
+            let doctorLastName = null;
+            let doctorImage = null;
+            let doctorNIC = null;
+
+            doctorUsers.map((doctor) => {
+              if (doctor._id == item.recordBy) {
+                doctorId = doctor._id;
+                doctorFirstName = doctor.firstName;
+                doctorLastName = doctor.lastName;
+                doctorImage = doctor.imageUrl;
+                doctorNIC = doctor.NIC;
+              }
+            });
+
             rowData.push({
               id: item._id,
               col1: item.medicalCondition,
@@ -117,6 +152,11 @@ export const MedicalRecordListImpl = () => {
               col4: item.medicalReport,
               col5: item.prescription,
               pharmacyNote: item.pharmacyNote,
+              doctorId: doctorId,
+              doctorFirstName: doctorFirstName,
+              doctorLastName: doctorLastName,
+              doctorImage: doctorImage,
+              doctorNIC: doctorNIC,
             });
           }
           // }
@@ -214,7 +254,7 @@ export const MedicalRecordListImpl = () => {
   const handleClose = () => setOpen(false);
   const handleOpen1 = (id, pharmacyNote) => {
     setPharmacyNote(pharmacyNote);
-    setOpen1(true)
+    setOpen1(true);
   };
   const handleClose1 = () => setOpen1(false);
 
@@ -276,7 +316,36 @@ export const MedicalRecordListImpl = () => {
   };
 
   const columns = [
-    // { field: "id", headerName: "MedicalRecord Id", width: 300 },
+    {
+      field: "id",
+      headerName: userType == "Patient" ? "Doctor Name" : "Patient Name",
+      width: 300,
+      renderCell: (params) => {
+        return (
+          <div className="productListItem">
+            {userType == "Patient" ? (
+              <>
+                <img
+                  className="productListImg"
+                  src={params.row.doctorImage}
+                  alt="Doctor Profile Picture"
+                />
+                {params.row.doctorFirstName + " " + params.row.doctorLastName}
+              </>
+            ) : (
+              <>
+                <img
+                  className="productListImg"
+                  src={params.row.patientImage}
+                  alt="Patient Profile Picture"
+                />
+                {params.row.patientFirstName + " " + params.row.patientLastName}
+              </>
+            )}
+          </div>
+        );
+      },
+    },
     {
       field: "col1",
       headerName: "Medical Condition",
@@ -430,7 +499,7 @@ export const MedicalRecordListImpl = () => {
           bgcolor: "#FFF",
         }}
       >
-        {loading ? (
+        {loading && loading1 && loading2 ? (
           <Box sx={{ width: "100%" }}>
             <LinearProgress />
           </Box>
@@ -498,7 +567,9 @@ export const MedicalRecordListImpl = () => {
             Pharmacy Note Added by Pharmacy
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <pre>{pharmacyNote ? pharmacyNote : "The pharmacy did not add a note."}</pre>
+            <pre>
+              {pharmacyNote ? pharmacyNote : "The pharmacy did not add a note."}
+            </pre>
           </Typography>
         </Box>
       </Modal>

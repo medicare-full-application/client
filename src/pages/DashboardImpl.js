@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
+import { removeMedicalRecords } from "../redux/medicalRecordRedux";
+import { getMedicalRecord } from "../redux/medicalRecordApiCalls";
 
 export const DashboardImpl = () => {
   const [userStats, setUserStats] = useState([]);
@@ -38,6 +40,20 @@ export const DashboardImpl = () => {
     ],
     []
   );
+
+  useEffect(() => {
+    const getDataFromDB = async () => {
+      dispatch(removeMedicalRecords());
+      const result = await getMedicalRecord(dispatch, token);
+      if (result) {
+        console.log("Get user data success");
+        setLoading1(false);
+      } else {
+        console.log("Get user data unsuccess");
+      }
+    };
+    getDataFromDB();
+  }, [loading1]);
 
   // useEffect(() => {
   //   const getCountInventoryData = async () => {

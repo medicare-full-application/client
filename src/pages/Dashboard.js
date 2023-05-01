@@ -1,13 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid } from "@mui/material";
 import "./common.css";
 import MainHeader from "../components/MainHeader";
 import { DashboardImpl } from "./DashboardImpl";
 import { useDispatch, useSelector } from "react-redux";
+import { removeMedicalRecords } from "../redux/medicalRecordRedux";
+import { getMedicalRecord } from "../redux/medicalRecordApiCalls";
 
 export const Dashboard = () => {
   
   const token = useSelector((state) => state.user.token);
+  const [loading, setLoading] = useState(true);
   // const permissionState = useSelector(
   //   (state) => state.permissionData.permissionsData
   // );

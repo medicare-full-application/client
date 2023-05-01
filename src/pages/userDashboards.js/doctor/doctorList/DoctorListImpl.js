@@ -101,7 +101,7 @@ export const DoctorListImpl = () => {
       }
     };
     getDataFromDB();
-  }, [loading, requestTrigger]);
+  }, [loading1, requestTrigger]);
 
   React.useEffect(() => {
     const getNormalUserData = async () => {

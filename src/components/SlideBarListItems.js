@@ -9,6 +9,7 @@ import { useState } from "react";
 export const SlideBarListItems = () => {
   const userType = useSelector((state) => state.user.userType);
   const currentUser = useSelector((state) => state.user.currentUser);
+  const userId = useSelector((state) => state.user.currentUser._id);
 
   let listItems = [];
 
@@ -65,36 +66,76 @@ export const SlideBarListItems = () => {
     ];
   } else if (userType === "Patient") {
     if (!currentUser.childOrNot) {
-      listItems = [
-        {
-          id: "leftbar-listItem-4",
-          listName: "Dashboard",
-          icon: <BookmarksIcon />,
-          link: "/patientDashboard",
-          name: "dashboard",
-        },
-        {
-          id: "leftbar-listItem-5",
-          listName: "Doctors",
-          icon: <BookmarksIcon />,
-          link: "/doctor",
-          name: "dashboard",
-        },
-        {
-          id: "leftbar-listItem-6",
-          listName: "My Medical Records",
-          icon: <BookmarksIcon />,
-          link: "/medicalRecord",
-          name: "dashboard",
-        },
-        {
-          id: "leftbar-listItem-66",
-          listName: "Add Child",
-          icon: <BookmarksIcon />,
-          link: "/addChild",
-          name: "dashboard",
-        },
-      ];
+      if (currentUser.haveChildren) {
+        listItems = [
+          {
+            id: "leftbar-listItem-4",
+            listName: "Dashboard",
+            icon: <BookmarksIcon />,
+            link: "/patientDashboard",
+            name: "dashboard",
+          },
+          {
+            id: "leftbar-listItem-5",
+            listName: "Doctors",
+            icon: <BookmarksIcon />,
+            link: "/doctor",
+            name: "dashboard",
+          },
+          {
+            id: "leftbar-listItem-6",
+            listName: "My Medical Records",
+            icon: <BookmarksIcon />,
+            link: "/medicalRecord",
+            name: "dashboard",
+          },
+          {
+            id: "leftbar-listItem-66",
+            listName: "Add Child",
+            icon: <BookmarksIcon />,
+            link: "/addChild",
+            name: "dashboard",
+          },
+          {
+            id: "leftbar-listItem-66",
+            listName: "Children List",
+            icon: <BookmarksIcon />,
+            link: `/patient/child/${userId}`,
+            name: "dashboard",
+          },
+        ];
+      } else {
+        listItems = [
+          {
+            id: "leftbar-listItem-4",
+            listName: "Dashboard",
+            icon: <BookmarksIcon />,
+            link: "/patientDashboard",
+            name: "dashboard",
+          },
+          {
+            id: "leftbar-listItem-5",
+            listName: "Doctors",
+            icon: <BookmarksIcon />,
+            link: "/doctor",
+            name: "dashboard",
+          },
+          {
+            id: "leftbar-listItem-6",
+            listName: "My Medical Records",
+            icon: <BookmarksIcon />,
+            link: "/medicalRecord",
+            name: "dashboard",
+          },
+          {
+            id: "leftbar-listItem-66",
+            listName: "Add Child",
+            icon: <BookmarksIcon />,
+            link: "/addChild",
+            name: "dashboard",
+          },
+        ];
+      }
     } else {
       listItems = [
         {

@@ -126,7 +126,7 @@ export const ChildListImpl = () => {
             });
           }
 
-          if (userType == "Pharmacist") {
+          if (userType == "Pharmacist" || userType == "Patient") {
             medicalRecords.map((medicalRecordData) => {
               if (item._id == medicalRecordData.recordFor) {
                 prescription = medicalRecordData.prescription;
@@ -268,7 +268,7 @@ export const ChildListImpl = () => {
           token
         );
         if (result) {
-          setRequestTrigger(requestTrigger+"Q");
+          setRequestTrigger(requestTrigger + "Q");
           Swal.fire("Updated!", "Your note successfully added.", "success");
         } else {
           Swal.fire(
@@ -414,19 +414,21 @@ export const ChildListImpl = () => {
                 >
                   <VisibilityIcon />
                 </IconButton>
-                <IconButton
-                  aria-label="edit"
-                  size="large"
-                  color="success"
-                  onClick={() =>
-                    addNewNote(
-                      params.row.medicalRecordId,
-                      params.row.pharmacyNote
-                    )
-                  }
-                >
-                  <EditIcon />
-                </IconButton>
+                {userType == "Pharmacist" && (
+                  <IconButton
+                    aria-label="edit"
+                    size="large"
+                    color="success"
+                    onClick={() =>
+                      addNewNote(
+                        params.row.medicalRecordId,
+                        params.row.pharmacyNote
+                      )
+                    }
+                  >
+                    <EditIcon />
+                  </IconButton>
+                )}
               </Stack>
             )}
           </>
